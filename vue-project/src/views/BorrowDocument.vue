@@ -1,0 +1,195 @@
+<template>
+  <div class="container">
+    <!-- 왼쪽 입력 폼 (스크롤 가능, 스크롤바 숨김) -->
+    <div class="form-section">
+      <h2>금전 차용증 작성</h2>
+      <div class="form-group">
+        <label>채무자 이름</label>
+        <input v-model="borrowerName" type="text" placeholder="채무자 이름을 입력하세요" />
+      </div>
+
+      <!-- 추가 입력 필드 -->
+      <div class="form-group">
+        <label>채권자 이름</label>
+        <input v-model="lenderName" type="text" placeholder="채권자 이름을 입력하세요" />
+      </div>
+
+      <div class="form-group">
+        <label>대여기간</label>
+        <input v-model="loanPeriod" type="date" />
+      </div>
+
+      <div class="form-group">
+        <label>차용금액</label>
+        <input v-model="loanAmount" type="number" placeholder="차용금액을 입력하세요" />
+      </div>
+
+      <div class="form-group">
+        <label>이자율(%)</label>
+        <input v-model="interestRate" type="number" placeholder="이자율을 입력하세요" />
+      </div>
+
+      <!-- 추가 입력 필드들 -->
+      <h3>채권자 상세 정보</h3>
+      <div class="form-group">
+        <label>채권자 성명</label>
+        <input v-model="lenderNameDetail" type="text" placeholder="성명을 입력하세요" />
+      </div>
+      <div class="form-group">
+        <label>채권자 주민등록번호</label>
+        <input v-model="lenderIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
+      </div>
+      <div class="form-group">
+        <label>채권자 주소</label>
+        <input v-model="lenderAddress" type="text" placeholder="주소를 입력하세요" />
+      </div>
+      <div class="form-group">
+        <label>채권자 전화번호</label>
+        <input v-model="lenderPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
+      </div>
+    </div>
+
+    <!-- 오른쪽 A4 용지 미리보기 (스크롤 없음) -->
+    <div class="preview-section">
+      <div class="a4-paper">
+        <h2 class="title">금전 차용증</h2>
+        <p>
+          {{ lenderName }}(이하 '채권자')와 {{ borrowerName }}(이하 '채무자')는 아래와 같이 금전
+          차용증을 작성하였습니다.
+        </p>
+        <ul>
+          <li>차용일자: {{ loanPeriod }}</li>
+          <li>차용금액: {{ formattedLoanAmount }}</li>
+          <li>이자율: {{ interestRate }}%</li>
+        </ul>
+        <p class="date">{{ currentDate }}</p>
+
+        <h3>채권자 정보</h3>
+        <ul>
+          <li>성명: {{ lenderNameDetail }}</li>
+          <li>주민등록번호: {{ lenderIdNumber }}</li>
+          <li>주소: {{ lenderAddress }}</li>
+          <li>전화번호: {{ lenderPhoneNumber }}</li>
+        </ul>
+
+        <h3>채무자 정보</h3>
+        <ul>
+          <li>성명: {{ borrowerNameDetail }}</li>
+          <li>주민등록번호: {{ borrowerIdNumber }}</li>
+          <li>주소: {{ borrowerAddress }}</li>
+          <li>전화번호: {{ borrowerPhoneNumber }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+// 데이터 정의
+const borrowerName = ref('')
+const lenderName = ref('')
+const loanPeriod = ref('')
+const loanAmount = ref('')
+const interestRate = ref('')
+const currentDate = new Date().toLocaleDateString('ko-KR')
+
+// 채권자 정보
+const lenderNameDetail = ref('')
+const lenderIdNumber = ref('')
+const lenderAddress = ref('')
+const lenderPhoneNumber = ref('')
+
+// 채무자 정보
+const borrowerNameDetail = ref('')
+const borrowerIdNumber = ref('')
+const borrowerAddress = ref('')
+const borrowerPhoneNumber = ref('')
+
+// 금액을 한국 원화 형식으로 변환
+const formattedLoanAmount = computed(() => {
+  return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(
+    loanAmount.value
+  )
+})
+</script>
+
+<style scoped>
+/* 상단의 헤더를 피하기 위해 패딩 추가 */
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  padding-top: 80px; /* 헤더 크기만큼 위쪽에 패딩 추가 */
+  height: calc(100vh - 80px); /* 헤더 크기를 뺀 화면 높이 */
+}
+
+.form-section {
+  width: 45%;
+  height: 100%;
+  overflow-y: scroll;
+  padding-right: 10px;
+}
+
+/* 스크롤바 숨기기 */
+.form-section::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* A4 용지 미리보기 */
+.preview-section {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* A4 용지가 위로 밀리지 않게 설정 */
+  height: 100%;
+  padding-top: 20px; /* A4 용지와 헤더 사이에 충분한 공간 확보 */
+}
+
+.a4-paper {
+  width: 210mm;
+  height: 297mm;
+  padding: 20px;
+  background-color: white;
+  border: 1px solid #333; /* 모든 면에 동일하게 검정선 추가 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  position: relative;
+  margin-top: 0;
+  overflow: hidden;
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.date {
+  text-align: right;
+  margin-top: 30px;
+}
+
+/* 가독성을 위한 상하 여백 */
+.form-group {
+  margin-bottom: 25px; /* 상하 간격 늘리기 */
+}
+
+.form-group input,
+.form-group label {
+  line-height: 1.5;
+}
+
+p,
+li {
+  margin-bottom: 15px; /* 텍스트 상하 간격 조정 */
+}
+</style>
