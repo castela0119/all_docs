@@ -14,9 +14,14 @@
         <input v-model="lenderName" type="text" placeholder="채권자 이름을 입력하세요" />
       </div>
 
+      <!-- 대여기간 입력 필드 (시작 날짜와 끝 날짜 추가) -->
       <div class="form-group">
-        <label>대여기간</label>
-        <input v-model="loanPeriod" type="date" />
+        <label>대여 기간</label>
+        <div class="date-inputs">
+          <input v-model="loanStartDate" type="date" />
+          <span>~</span>
+          <input v-model="loanEndDate" type="date" />
+        </div>
       </div>
 
       <div class="form-group">
@@ -47,6 +52,24 @@
         <label>채권자 전화번호</label>
         <input v-model="lenderPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
       </div>
+
+      <h3>채무자 상세 정보</h3>
+      <div class="form-group">
+        <label>채무자 성명</label>
+        <input v-model="borrowerNameDetail" type="text" placeholder="성명을 입력하세요" />
+      </div>
+      <div class="form-group">
+        <label>채무자 주민등록번호</label>
+        <input v-model="borrowerIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
+      </div>
+      <div class="form-group">
+        <label>채무자 주소</label>
+        <input v-model="borrowerAddress" type="text" placeholder="주소를 입력하세요" />
+      </div>
+      <div class="form-group">
+        <label>채무자 전화번호</label>
+        <input v-model="borrowerPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
+      </div>
     </div>
 
     <!-- 오른쪽 A4 용지 미리보기 (스크롤 없음) -->
@@ -58,7 +81,7 @@
           차용증을 작성하였습니다.
         </p>
         <ul>
-          <li>차용일자: {{ loanPeriod }}</li>
+          <li>대여 기간: {{ loanStartDate }} ~ {{ loanEndDate }}</li>
           <li>차용금액: {{ formattedLoanAmount }}</li>
           <li>이자율: {{ interestRate }}%</li>
         </ul>
@@ -71,7 +94,6 @@
           <li>주소: {{ lenderAddress }}</li>
           <li>전화번호: {{ lenderPhoneNumber }}</li>
         </ul>
-
         <h3>채무자 정보</h3>
         <ul>
           <li>성명: {{ borrowerNameDetail }}</li>
@@ -90,7 +112,8 @@ import { ref, computed } from 'vue'
 // 데이터 정의
 const borrowerName = ref('')
 const lenderName = ref('')
-const loanPeriod = ref('')
+const loanStartDate = ref('') // 대여 시작일
+const loanEndDate = ref('') // 대여 종료일
 const loanAmount = ref('')
 const interestRate = ref('')
 const currentDate = new Date().toLocaleDateString('ko-KR')
@@ -123,6 +146,7 @@ const formattedLoanAmount = computed(() => {
   padding: 20px;
   padding-top: 80px; /* 헤더 크기만큼 위쪽에 패딩 추가 */
   height: calc(100vh - 80px); /* 헤더 크기를 뺀 화면 높이 */
+  gap: 40px; /* 좌우 간격 추가 */
 }
 
 .form-section {
@@ -180,7 +204,7 @@ ul {
 
 /* 가독성을 위한 상하 여백 */
 .form-group {
-  margin-bottom: 25px; /* 상하 간격 늘리기 */
+  margin-bottom: 35px; /* 상하 간격을 더 넓게 */
 }
 
 .form-group input,
@@ -188,8 +212,45 @@ ul {
   line-height: 1.5;
 }
 
+/* 입력 필드 간 좌우 간격과 텍스트 박스의 패딩 조정 */
+.form-group input {
+  width: 100%;
+  padding: 12px 15px; /* 텍스트 필드의 패딩 조정 */
+  margin-top: 8px; /* 라벨과 입력 필드 사이 간격 */
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+/* 텍스트 크기 줄이기 */
+h2 {
+  font-size: 1.5rem; /* 기본 크기보다 작게 조정 */
+}
+
+h3 {
+  font-size: 1.2rem; /* 기본 크기보다 작게 조정 */
+}
+
 p,
 li {
-  margin-bottom: 15px; /* 텍스트 상하 간격 조정 */
+  margin-bottom: 20px; /* 텍스트 상하 간격 조정 */
+}
+
+/* 날짜 입력 필드 (시작날짜, 종료날짜를 나란히 표시) */
+.date-inputs {
+  display: flex;
+  align-items: center;
+  margin-top: 8px; /* 라벨과 날짜 입력 필드 사이 간격 추가 */
+}
+
+.date-inputs input {
+  width: 48%;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.date-inputs span {
+  margin: 0 10px;
 }
 </style>
