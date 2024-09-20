@@ -4,26 +4,19 @@
     <main class="main-content">
       <h2>일반 문서부터 법적 문서까지 간편하게 작성</h2>
       <div class="steps">
-        <div class="step">STEP1<br>문서 선택</div>
-        <div class="step">STEP2<br>템플릿에 작성</div>
-        <div class="step">STEP3<br>문서 추출하기<br><small>PDF or Word</small></div>
+        <div class="step">STEP1<br />문서 선택</div>
+        <div class="step">STEP2<br />템플릿에 작성</div>
+        <div class="step">STEP3<br />문서 추출하기<br /><small>PDF or Word</small></div>
       </div>
       <RouterLink to="/paper-type">
-      <button class="select-button">문서 선택 하기</button>
-    </RouterLink>
+        <button class="select-button">문서 선택 하기</button>
+      </RouterLink>
     </main>
   </div>
 </template>
 
-<script>
-import TheHeader from '@/components/TheHeader.vue';
-
-export default {
-  name: 'HomeView',
-  components: {
-    
-  }
-}
+<script setup>
+import TheHeader from '@/components/TheHeader.vue'
 </script>
 
 <style scoped>
@@ -32,25 +25,26 @@ export default {
 }
 
 .main-content {
-  padding: 20px;
+  padding: 40px 20px;
 }
 
 .main-content h2 {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  font-size: 1.5rem;
 }
 
 .steps {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 .step {
   background-color: #d3e0fc;
-  padding: 10px 20px;
-  margin: 0 10px;
-  border-radius: 5px;
-  font-size: 1rem;
+  padding: 20px 30px; /* 가로 패딩: 30px */
+  margin: 0 20px; /* 좌우 마진: 20px */
+  border-radius: 8px;
+  font-size: 1.1rem;
 }
 
 .select-button {
@@ -58,8 +52,14 @@ export default {
   color: white;
   padding: 15px 30px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   font-size: 1.2rem;
   cursor: pointer;
+  margin-top: 20px;
+  width: calc((90px + 60px) * 3 + 40px * 2); /* 버튼 너비 설정 */
+}
+
+.select-button:hover {
+  background-color: #e57373;
 }
 </style>
