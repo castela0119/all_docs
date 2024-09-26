@@ -73,6 +73,9 @@
         <label>채무자 전화번호</label>
         <input v-model="borrowerPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
       </div>
+
+      <!-- 작성 완료 버튼 추가 -->
+      <button @click="handleComplete">작성 완료</button>
     </div>
 
     <!-- 오른쪽 A4 용지 미리보기 (스크롤 없음) -->
@@ -111,6 +114,10 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+// Vue Router 사용 설정
+const router = useRouter()
 
 // 데이터 정의
 const borrowerName = ref('')
@@ -147,6 +154,26 @@ const handleInput1 = (event) => {
 const handleInput2 = (event) => {
   borrowerName.value = event.target.value
 }
+
+const handleComplete = () => {
+  router.push({
+    name: 'paperComplete', // 해당 페이지의 route name을 지정합니다.
+    params: {
+      lenderName: lenderName.value,
+      borrowerName: borrowerName.value,
+      loanStartDate: loanStartDate.value,
+      loanEndDate: loanEndDate.value,
+      loanAmount: loanAmount.value,
+      interestRate: interestRate.value,
+      lenderIdNumber: lenderIdNumber.value,
+      lenderAddress: lenderAddress.value,
+      lenderPhoneNumber: lenderPhoneNumber.value,
+      borrowerIdNumber: borrowerIdNumber.value,
+      borrowerAddress: borrowerAddress.value,
+      borrowerPhoneNumber: borrowerPhoneNumber.value
+    }
+  })
+}
 </script>
 
 <style scoped>
@@ -179,8 +206,10 @@ const handleInput2 = (event) => {
   display: flex;
   justify-content: center;
   align-items: flex-start; /* A4 용지가 위로 밀리지 않게 설정 */
-  height: 100%;
-  padding-top: 20px; /* A4 용지와 헤더 사이에 충분한 공간 확보 */
+  height: 100vh;
+  background-color: #ccc; /* 회색 배경 */
+  padding: 20px; /* A4 용지 주변에 여백 추가 */
+  margin: 0;
 }
 
 .a4-paper {
