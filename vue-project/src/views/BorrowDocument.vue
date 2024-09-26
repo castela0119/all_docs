@@ -75,7 +75,10 @@
       </div>
 
       <!-- 작성 완료 버튼 추가 -->
-      <button @click="handleComplete">작성 완료</button>
+      <div class="button-group">
+        <button class="btn btn-left" @click="goToPaperType">문서선택</button>
+        <button class="btn btn-right" @click="handleComplete">작성완료</button>
+      </div>
     </div>
 
     <!-- 오른쪽 A4 용지 미리보기 (스크롤 없음) -->
@@ -155,9 +158,14 @@ const handleInput2 = (event) => {
   borrowerName.value = event.target.value
 }
 
+const goToPaperType = () => {
+  // 문서 선택 페이지로 이동 (경로는 문서 선택 페이지의 라우트에 맞게 설정)
+  router.push({ name: 'PaperType' })
+}
+
 const handleComplete = () => {
   router.push({
-    name: 'paperComplete', // 해당 페이지의 route name을 지정합니다.
+    name: 'BorrowDocumentCmpl', // 해당 페이지의 route name을 지정합니다.
     params: {
       lenderName: lenderName.value,
       borrowerName: borrowerName.value,
@@ -292,5 +300,43 @@ li {
 
 .date-inputs span {
   margin: 0 10px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+
+.btn {
+  padding: 15px 30px;
+  font-size: 18px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-left {
+  background-color: #b3d1ff; /* 문서선택 버튼 색상 */
+  color: #000;
+}
+
+.btn-right {
+  background-color: #ffc4c4; /* 작성완료 버튼 색상 */
+  color: #000;
+}
+
+.btn-left:hover,
+.btn-right:hover {
+  opacity: 0.8;
+}
+
+/* 화살표 스타일링 */
+.btn-left::before {
+  content: '← ';
+}
+
+.btn-right::after {
+  content: ' →';
 }
 </style>
