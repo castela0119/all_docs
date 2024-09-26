@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import PaperType from '@/views/PaperType.vue' // PaperType 페이지
 import BorrowDocument from '@/views/BorrowDocument.vue'
+import BorrowDocumentCmpl from '@/views/BorrowDocumentCmpl.vue'
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: '/borrow-document',
     name: 'BorrowDocument',
     component: BorrowDocument
+  },
+  {
+    path: '/borrow-document-cmpl',
+    name: 'BorrowDocumentCmpl',
+    component: BorrowDocumentCmpl
   }
 ]
 
