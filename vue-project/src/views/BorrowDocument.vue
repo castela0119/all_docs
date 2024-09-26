@@ -3,15 +3,26 @@
     <!-- 왼쪽 입력 폼 (스크롤 가능, 스크롤바 숨김) -->
     <div class="form-section">
       <h2>금전 차용증 작성</h2>
-      <div class="form-group">
-        <label>채무자 이름</label>
-        <input v-model="borrowerName" type="text" placeholder="채무자 이름을 입력하세요" />
-      </div>
 
       <!-- 추가 입력 필드 -->
       <div class="form-group">
         <label>채권자 이름</label>
-        <input v-model="lenderName" type="text" placeholder="채권자 이름을 입력하세요" />
+        <input
+          v-model="lenderName"
+          @input="handleInput1"
+          type="text"
+          placeholder="채권자 이름을 입력하세요"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>채무자 이름</label>
+        <input
+          :value="borrowerName"
+          @input="handleInput2"
+          type="text"
+          placeholder="채무자 이름을 입력하세요"
+        />
       </div>
 
       <!-- 대여기간 입력 필드 (시작 날짜와 끝 날짜 추가) -->
@@ -30,16 +41,12 @@
       </div>
 
       <div class="form-group">
-        <label>이자율(%)</label>
-        <input v-model="interestRate" type="number" placeholder="이자율을 입력하세요" />
+        <label>연 이자율(%)</label>
+        <input v-model="interestRate" type="number" placeholder="연 이자율을 입력하세요" />
       </div>
 
       <!-- 추가 입력 필드들 -->
       <h3>채권자 상세 정보</h3>
-      <div class="form-group">
-        <label>채권자 성명</label>
-        <input v-model="lenderNameDetail" type="text" placeholder="성명을 입력하세요" />
-      </div>
       <div class="form-group">
         <label>채권자 주민등록번호</label>
         <input v-model="lenderIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
@@ -55,15 +62,11 @@
 
       <h3>채무자 상세 정보</h3>
       <div class="form-group">
-        <label>채무자 성명</label>
-        <input v-model="borrowerNameDetail" type="text" placeholder="성명을 입력하세요" />
-      </div>
-      <div class="form-group">
         <label>채무자 주민등록번호</label>
         <input v-model="borrowerIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
       </div>
       <div class="form-group">
-        <label>채무자 주소</label>
+        <label>채무자 주소 (등본상 주소)</label>
         <input v-model="borrowerAddress" type="text" placeholder="주소를 입력하세요" />
       </div>
       <div class="form-group">
@@ -77,7 +80,7 @@
       <div class="a4-paper">
         <h2 class="title">금전 차용증</h2>
         <p>
-          {{ lenderName }}(이하 '채권자')와 {{ borrowerName }}(이하 '채무자')는 아래와 같이 금전
+          {{ lenderName }}(이하 '채권자') 와 {{ borrowerName }}(이하 '채무자')는 아래와 같이 금전
           차용증을 작성하였습니다.
         </p>
         <ul>
@@ -85,18 +88,18 @@
           <li>차용금액: {{ formattedLoanAmount }}</li>
           <li>이자율: {{ interestRate }}%</li>
         </ul>
-        <p class="date">{{ currentDate }}</p>
+        <p class="date">작성일 : {{ currentDate }}</p>
 
         <h3>채권자 정보</h3>
         <ul>
-          <li>성명: {{ lenderNameDetail }}</li>
+          <li>성명: {{ lenderName }}</li>
           <li>주민등록번호: {{ lenderIdNumber }}</li>
           <li>주소: {{ lenderAddress }}</li>
           <li>전화번호: {{ lenderPhoneNumber }}</li>
         </ul>
         <h3>채무자 정보</h3>
         <ul>
-          <li>성명: {{ borrowerNameDetail }}</li>
+          <li>성명: {{ borrowerName }}</li>
           <li>주민등록번호: {{ borrowerIdNumber }}</li>
           <li>주소: {{ borrowerAddress }}</li>
           <li>전화번호: {{ borrowerPhoneNumber }}</li>
@@ -119,13 +122,13 @@ const interestRate = ref('')
 const currentDate = new Date().toLocaleDateString('ko-KR')
 
 // 채권자 정보
-const lenderNameDetail = ref('')
+// const lenderNameDetail = ref('')
 const lenderIdNumber = ref('')
 const lenderAddress = ref('')
 const lenderPhoneNumber = ref('')
 
 // 채무자 정보
-const borrowerNameDetail = ref('')
+// const borrowerNameDetail = ref('')
 const borrowerIdNumber = ref('')
 const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
@@ -136,6 +139,14 @@ const formattedLoanAmount = computed(() => {
     loanAmount.value
   )
 })
+
+const handleInput1 = (event) => {
+  lenderName.value = event.target.value
+}
+
+const handleInput2 = (event) => {
+  borrowerName.value = event.target.value
+}
 </script>
 
 <style scoped>
