@@ -33,3 +33,23 @@ npm run build
 ```sh
 npm run lint
 ```
+
+### ec2 내 서버실행 명령어
+
+```sh
+pm2 start npm --nmae "vue-project" -- run dev
+```
+
+### ec2 내 서버종료
+
+```sh
+pm2 delete all # 모든 서버 종료
+
+pm2 delete 0(서버id) # 특정 서버 종료
+```
+
+### ec2 내 서버실행 확인
+
+```sh
+pm2 list
+```
