@@ -53,3 +53,35 @@ pm2 delete 0(서버id) # 특정 서버 종료
 ```sh
 pm2 list
 ```
+
+## Git Commit Message 규칙
+
+프로젝트의 Git commit 메시지는 최소한의 규칙을 따르며, 다음과 같은 타입으로 나누어 작성합니다.
+
+### 규칙 형식
+
+
+- **`<type>`**: `feat`, `fix`, `del`, `chore` 중 하나.
+- **`<subject>`**: 변경 사항에 대한 간결한 설명.
+
+
+- **`<type>`**: `feat`, `fix`, `del`, `chore`, `docs` 중 하나.
+- **`<subject>`**: 변경 사항에 대한 간결한 설명.
+
+### Commit Message Type
+
+1. **`feat`**: 새로운 기능 추가
+   - 예: `feat: add user login functionality`
+
+2. **`fix`**: 버그 수정
+   - 예: `fix: correct form validation issue`
+
+3. **`del`**: 불필요한 코드 또는 파일 삭제
+   - 예: `del: remove deprecated API`
+
+4. **`chore`**: 설정 변경, 외부 의존성 관리 등 코드 외의 작업
+   - 예: `chore: update package dependencies`
+
+5. **`docs`**: 문서 수정
+   - 예: `docs: update API documentation` 
+
