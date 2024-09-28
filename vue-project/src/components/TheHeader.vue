@@ -2,6 +2,7 @@
   <header class="app-header">
     <div class="logo" @click="openModal">
       <img src="@/assets/logo.png" alt="Logo" />
+      모두의 문서
     </div>
     <div>{{ title }}</div>
     <div class="user-icon">
@@ -11,7 +12,7 @@
     <!-- 모달 -->
     <div v-if="isModalOpen" class="modal-overlay" @click="closeModal">
       <div class="modal-content" @click.stop>
-        <p>{{ modalContent }}</p>
+        <p class="modal-text">{{ modalContent }}</p>
         <div class="modal-buttons">
           <button @click="closeModal">취소</button>
           <button @click="confirmModal">확인</button>
@@ -30,7 +31,16 @@ const router = useRouter()
 const route = useRoute()
 
 const openModal = () => {
-  isModalOpen.value = true
+
+  console.log("route.name ::", route.name);
+  
+  if (route.name === 'Home') {
+    // HomeView에서는 새로고침
+    window.location.reload();
+  } else {
+    // 다른 페이지에서는 모달 오픈
+    isModalOpen.value = true
+  }
 }
 
 const closeModal = () => {
@@ -40,9 +50,9 @@ const closeModal = () => {
 // 현재 경로에 따라 모달의 내용을 동적으로 설정
 const modalContent = computed(() => {
   if (route.name === 'PaperType') {
-    return '문서작성을 취소하시겠습니까? 검색한 내역이 사라집니다.'
+    return '문서작성을 취소하시겠습니까? \n 검색한 내역이 사라집니다.'
   } else if (route.name === 'BorrowDocument') {
-    return '문서작성을 취소하시겠습니까? 작성한 내용이 사라집니다.'
+    return '문서작성을 취소하시겠습니까? \n 작성한 내용이 사라집니다.'
   } else {
     return '기본 내용입니다'
   }
@@ -56,16 +66,17 @@ const confirmModal = () => {
 
 <style scoped>
 .app-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f5f7f6;
-  padding: 10px;
-  z-index: 1000;
+  position: fixed; /* 화면 상단에 고정되도록 설정 */
+  top: 0; /* 상단 위치를 0으로 설정 */
+  left: 0; /* 좌측 위치를 0으로 설정 */
+  width: 100%; /* 너비를 100%로 설정하여 화면 가로 전체를 차지 */
+  display: flex; /* 자식 요소들을 플렉스 박스로 배치 */
+  justify-content: space-between; /* 자식 요소들 간의 여백을 양쪽 끝에 배치 */
+  align-items: center; /* 수직 정렬을 가운데로 설정 */
+  background-color: #d4d7d6; /* 배경색을 설정 */
+  padding: 20px; /* padding을 20px로 늘려 높이 증가 */
+  height: 45px; /* 명시적으로 높이를 60px로 설정 */
+  z-index: 1000; /* 다른 요소 위에 배치될 수 있도록 z-index 설정 */
 }
 
 .logo {
@@ -75,8 +86,9 @@ const confirmModal = () => {
 }
 
 .logo img {
-  height: 12px;
+  height: 24px;
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .user-icon i {
@@ -126,5 +138,9 @@ const confirmModal = () => {
 .modal-buttons button:last-child {
   background-color: #007bff;
   color: white;
+}
+
+.modal-text {
+  white-space: pre-line; /* \n이 줄바꿈으로 처리되도록 설정 */
 }
 </style>
