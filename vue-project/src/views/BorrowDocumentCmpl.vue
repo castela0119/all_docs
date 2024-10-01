@@ -61,7 +61,7 @@ const borrowerPhoneNumber = route.params.borrowerPhoneNumber
 
 // 문서 수정 페이지로 돌아가기
 const goToEditDocument = () => {
-  router.push({ name: 'paperForm', params: route.params }) // 작성된 데이터를 유지한 채로 돌아감
+  router.push({ name: 'BorrowDocument', params: route.params }) // 작성된 데이터를 유지한 채로 돌아감
 }
 
 // PDF로 내보내기 함수
