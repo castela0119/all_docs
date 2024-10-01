@@ -86,12 +86,49 @@ const exportToPdf = () => {
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
-  padding: 20px;
+.a4-paper {
+  background-color: white;
+  width: 210mm; /* A4 용지 너비 */
+  height: 297mm; /* A4 용지 높이 */
+  margin: 0 auto; /* 중앙 정렬 */
+  padding: 20mm; /* A4 용지 안쪽 여백 */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif; /* 읽기 쉬운 폰트 설정 */
+  line-height: 1.6; /* 줄 간격을 늘려 가독성 향상 */
+}
+
+.title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul li {
+  margin-bottom: 10px; /* 항목 간 간격 조정 */
+}
+
+h3 {
+  font-size: 1.3rem;
+  margin-top: 30px; /* 섹션 사이에 충분한 간격 추가 */
+  margin-bottom: 10px; /* 제목과 항목 사이 간격 추가 */
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 1px solid #ccc; /* 제목 아래에 구분선 추가 */
+  padding-bottom: 5px;
+}
+
+p {
+  margin-bottom: 15px; /* 일반 텍스트의 상하 간격 */
+}
+
+.date {
+  text-align: right;
+  margin-top: 30px;
 }
 
 .button-group {
@@ -101,6 +138,7 @@ const exportToPdf = () => {
 }
 
 .btn {
+  margin-top: 70px;
   padding: 10px 20px;
   font-size: 18px;
   border-radius: 5px;
@@ -114,20 +152,5 @@ const exportToPdf = () => {
 
 .btn-right {
   background-color: #ffc4c4;
-}
-
-.a4-paper {
-  background-color: white;
-  width: 210mm;
-  height: 297mm;
-  margin: 0 auto;
-  padding: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-.title {
-  text-align: center;
-  font-size: 24px;
-  margin-bottom: 20px;
 }
 </style>
