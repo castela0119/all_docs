@@ -120,14 +120,14 @@ const exportToPdf = () => {
   })
 
   doc.text('차 용 증', 105, 20, { align: 'center' })
-  doc.text(`채권자: ${lenderName}`, 20, 40)
-  doc.text(`채무자: ${borrowerName}`, 20, 50)
-  doc.text(`주민등록번호: ${lenderIdNumber}`, 20, 60)
-  doc.text(`등본상 주소: ${borrowerAddress}`, 20, 70)
-  doc.text(`연락처: ${lenderPhoneNumber}`, 20, 80)
-  doc.text(`차용 금액: ${loanAmount}`, 20, 90)
-  doc.text(`대여 기간: ${loanStartDate} ~ ${loanEndDate}`, 20, 100)
-  doc.text(`이자율: ${interestRate}%`, 20, 110)
+  doc.text(`채권자: ${lenderName.value}`, 20, 40)
+  doc.text(`채무자: ${borrowerName.value}`, 20, 50)
+  doc.text(`주민등록번호: ${lenderIdNumber.value}`, 20, 60)
+  doc.text(`등본상 주소: ${borrowerAddress.value}`, 20, 70)
+  doc.text(`연락처: ${lenderPhoneNumber.value}`, 20, 80)
+  doc.text(`차용 금액: ${loanAmount.value}`, 20, 90)
+  doc.text(`대여 기간: ${loanStartDate.value} ~ ${loanEndDate.value}`, 20, 100)
+  doc.text(`이자율: ${interestRate.value}%`, 20, 110)
 
   // PDF 저장
   doc.save('차용증.pdf')
