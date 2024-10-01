@@ -1,126 +1,128 @@
 <template>
-  <div class="container1">
-    <!-- 왼쪽 입력 폼 (스크롤 가능, 스크롤바 숨김) -->
-    <div class="form-section">
-      <h2>금전 차용증 작성</h2>
+  <div class="container">
+    <div class="left-content">
+      <!-- 왼쪽 입력 폼 (스크롤 가능, 스크롤바 숨김) -->
+      <div class="form-section">
+        <h2>금전 차용증 작성</h2>
 
-      <!-- 추가 입력 필드 -->
-      <div class="section1">
-        <div class="form-group">
-          <label>채권자 이름</label>
-          <input
-            v-model="lenderName"
-            @input="handleInput1"
-            type="text"
-            placeholder="채권자 이름을 입력하세요"
-          />
+        <!-- 추가 입력 필드 -->
+        <div class="section1">
+          <div class="form-group">
+            <label>채권자 이름</label>
+            <input
+              v-model="lenderName"
+              @input="handleInput1"
+              type="text"
+              placeholder="채권자 이름을 입력하세요"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>채무자 이름</label>
+            <input
+              :value="borrowerName"
+              @input="handleInput2"
+              type="text"
+              placeholder="채무자 이름을 입력하세요"
+            />
+          </div>
         </div>
+        <div class="empty"></div>
 
-        <div class="form-group">
-          <label>채무자 이름</label>
-          <input
-            :value="borrowerName"
-            @input="handleInput2"
-            type="text"
-            placeholder="채무자 이름을 입력하세요"
-          />
+        <!-- 대여기간 입력 필드 (시작 날짜와 끝 날짜 추가) -->
+        <div class="section2">
+          <div class="form-group">
+            <label>대여 기간</label>
+            <div class="date-inputs">
+              <input v-model="loanStartDate" type="date" />
+              <span>~</span>
+              <input v-model="loanEndDate" type="date" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>차용금액</label>
+            <input v-model="loanAmount" type="number" placeholder="차용금액을 입력하세요" />
+          </div>
+
+          <div class="form-group">
+            <label>연 이자율(%)</label>
+            <input v-model="interestRate" type="number" placeholder="연 이자율을 입력하세요" />
+          </div>
         </div>
-      </div>
-      <div class="empty"></div>
-
-      <!-- 대여기간 입력 필드 (시작 날짜와 끝 날짜 추가) -->
-      <div class="section2">
-        <div class="form-group">
-          <label>대여 기간</label>
-          <div class="date-inputs">
-            <input v-model="loanStartDate" type="date" />
-            <span>~</span>
-            <input v-model="loanEndDate" type="date" />
+        <div class="empty"></div>
+        <!-- 추가 입력 필드들 -->
+        <div class="section3">
+          <h3>채권자 상세 정보</h3>
+          <div class="form-group">
+            <label>채권자 주민등록번호</label>
+            <input v-model="lenderIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
+          </div>
+          <div class="form-group">
+            <label>채권자 주소</label>
+            <input v-model="lenderAddress" type="text" placeholder="주소를 입력하세요" />
+          </div>
+          <div class="form-group">
+            <label>채권자 전화번호</label>
+            <input v-model="lenderPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
+          </div>
+        </div>
+        <div class="empty"></div>
+        <div class="section4">
+          <h3>채무자 상세 정보</h3>
+          <div class="form-group">
+            <label>채무자 주민등록번호</label>
+            <input v-model="borrowerIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
+          </div>
+          <div class="form-group">
+            <label>채무자 주소 (등본상 주소)</label>
+            <input v-model="borrowerAddress" type="text" placeholder="주소를 입력하세요" />
+          </div>
+          <div class="form-group">
+            <label>채무자 전화번호</label>
+            <input v-model="borrowerPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
           </div>
         </div>
 
-        <div class="form-group">
-          <label>차용금액</label>
-          <input v-model="loanAmount" type="number" placeholder="차용금액을 입력하세요" />
+        <!-- 작성 완료 버튼 추가 -->
+        <div class="button-group">
+          <button class="btn btn-left" @click="goToPaperType">문서선택</button>
+          <button class="btn btn-right" @click="handleComplete">작성완료</button>
         </div>
-
-        <div class="form-group">
-          <label>연 이자율(%)</label>
-          <input v-model="interestRate" type="number" placeholder="연 이자율을 입력하세요" />
-        </div>
-      </div>
-      <div class="empty"></div>
-      <!-- 추가 입력 필드들 -->
-      <div class="section3">
-        <h3>채권자 상세 정보</h3>
-        <div class="form-group">
-          <label>채권자 주민등록번호</label>
-          <input v-model="lenderIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
-        </div>
-        <div class="form-group">
-          <label>채권자 주소</label>
-          <input v-model="lenderAddress" type="text" placeholder="주소를 입력하세요" />
-        </div>
-        <div class="form-group">
-          <label>채권자 전화번호</label>
-          <input v-model="lenderPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
-        </div>
-      </div>
-      <div class="empty"></div>
-      <div class="section4">
-        <h3>채무자 상세 정보</h3>
-        <div class="form-group">
-          <label>채무자 주민등록번호</label>
-          <input v-model="borrowerIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
-        </div>
-        <div class="form-group">
-          <label>채무자 주소 (등본상 주소)</label>
-          <input v-model="borrowerAddress" type="text" placeholder="주소를 입력하세요" />
-        </div>
-        <div class="form-group">
-          <label>채무자 전화번호</label>
-          <input v-model="borrowerPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
-        </div>
-      </div>
-
-      <!-- 작성 완료 버튼 추가 -->
-      <div class="button-group">
-        <button class="btn btn-left" @click="goToPaperType">문서선택</button>
-        <button class="btn btn-right" @click="handleComplete">작성완료</button>
       </div>
     </div>
-  </div>
 
-  <div class="container2">
-    <!-- 오른쪽 A4 용지 미리보기 (스크롤 없음) -->
-    <div class="preview-section">
-      <div class="a4-paper">
-        <h2 class="title">금전 차용증</h2>
-        <p>
-          {{ lenderName }}(이하 '채권자') 와 {{ borrowerName }}(이하 '채무자')는 아래와 같이 금전
-          차용증을 작성하였습니다.
-        </p>
-        <ul>
-          <li>대여 기간: {{ loanStartDate }} ~ {{ loanEndDate }}</li>
-          <li>차용금액: {{ formattedLoanAmount }}</li>
-          <li>이자율: {{ interestRate }}%</li>
-        </ul>
-        <p class="date">작성일 : {{ currentDate }}</p>
+    <div class="right-content">
+      <!-- 오른쪽 A4 용지 미리보기 (스크롤 없음) -->
+      <div class="preview-section">
+        <div class="a4-paper">
+          <h2 class="title">금전 차용증</h2>
+          <p>
+            {{ lenderName }}(이하 '채권자') 와 {{ borrowerName }}(이하 '채무자')는 아래와 같이 금전
+            차용증을 작성하였습니다.
+          </p>
+          <ul>
+            <li>대여 기간: {{ loanStartDate }} ~ {{ loanEndDate }}</li>
+            <li>차용금액: {{ formattedLoanAmount }}</li>
+            <li>이자율: {{ interestRate }}%</li>
+          </ul>
+          <p class="date">작성일 : {{ currentDate }}</p>
 
-        <h3>채권자 정보</h3>
-        <ul>
-          <li>성명: {{ lenderName }}</li>
-          <li>주민등록번호: {{ lenderIdNumber }}</li>
-          <li>주소: {{ lenderAddress }}</li>
-          <li>전화번호: {{ lenderPhoneNumber }}</li>
-        </ul>
-        <h3>채무자 정보</h3>
-        <ul>
-          <li>성명: {{ borrowerName }}</li>
-          <li>주민등록번호: {{ borrowerIdNumber }}</li>
-          <li>주소: {{ borrowerAddress }}</li>
-          <li>전화번호: {{ borrowerPhoneNumber }}</li>
-        </ul>
+          <h3>채권자 정보</h3>
+          <ul>
+            <li>성명: {{ lenderName }}</li>
+            <li>주민등록번호: {{ lenderIdNumber }}</li>
+            <li>주소: {{ lenderAddress }}</li>
+            <li>전화번호: {{ lenderPhoneNumber }}</li>
+          </ul>
+          <h3>채무자 정보</h3>
+          <ul>
+            <li>성명: {{ borrowerName }}</li>
+            <li>주민등록번호: {{ borrowerIdNumber }}</li>
+            <li>주소: {{ borrowerAddress }}</li>
+            <li>전화번호: {{ borrowerPhoneNumber }}</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -143,13 +145,11 @@ const interestRate = ref('')
 const currentDate = new Date().toLocaleDateString('ko-KR')
 
 // 채권자 정보
-// const lenderNameDetail = ref('')
 const lenderIdNumber = ref('')
 const lenderAddress = ref('')
 const lenderPhoneNumber = ref('')
 
 // 채무자 정보
-// const borrowerNameDetail = ref('')
 const borrowerIdNumber = ref('')
 const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
@@ -175,28 +175,35 @@ const goToPaperType = () => {
 }
 
 const handleComplete = () => {
-  router.push({
-    name: 'BorrowDocumentCmpl', // 해당 페이지의 route name을 지정합니다.
-    params: {
-      lenderName: lenderName.value,
-      borrowerName: borrowerName.value,
-      loanStartDate: loanStartDate.value,
-      loanEndDate: loanEndDate.value,
-      loanAmount: loanAmount.value,
-      interestRate: interestRate.value,
-      lenderIdNumber: lenderIdNumber.value,
-      lenderAddress: lenderAddress.value,
-      lenderPhoneNumber: lenderPhoneNumber.value,
-      borrowerIdNumber: borrowerIdNumber.value,
-      borrowerAddress: borrowerAddress.value,
-      borrowerPhoneNumber: borrowerPhoneNumber.value
-    }
-  })
+  const borrowObj = {
+    lenderName: lenderName.value,
+    borrowerName: borrowerName.value,
+    loanStartDate: loanStartDate.value,
+    loanEndDate: loanEndDate.value,
+    loanAmount: loanAmount.value,
+    interestRate: interestRate.value,
+    lenderIdNumber: lenderIdNumber.value,
+    lenderAddress: lenderAddress.value,
+    lenderPhoneNumber: lenderPhoneNumber.value,
+    borrowerIdNumber: borrowerIdNumber.value,
+    borrowerAddress: borrowerAddress.value,
+    borrowerPhoneNumber: borrowerPhoneNumber.value
+  }
+
+  // localStorage에 데이터를 저장
+  localStorage.setItem('borrowObj', JSON.stringify(borrowObj))
+
+  // 페이지 이동
+  router.push({ name: 'BorrowDocumentCmpl' })
 }
 </script>
 
 <style scoped>
-/* 상단의 헤더를 피하기 위해 패딩 추가 */
+.container {
+  display: flex; /* flexbox 레이아웃을 사용하여 자식 요소들을 가로로 배치 */
+  width: 100vw; /* 가로 화면 전체를 차지 */
+  height: 100vh; /* 세로 화면 전체를 차지 */
+}
 
 .form-section {
   width: 340px;
@@ -209,10 +216,12 @@ const handleComplete = () => {
   top: 25px; /* 상단에 맞춤 */
 }
 
-.container2 {
+.right-content {
   background-color: #ccc;
   padding: 25px;
+  flex: 1; /* 남은 공간을 모두 차지 */
   top: 25px; /* 상단에 맞춤 */
+  height: 100%;
 }
 
 /* 스크롤바 숨기기 */
@@ -265,8 +274,7 @@ const handleComplete = () => {
   justify-content: center;
   align-items: flex-start; /* A4 용지가 위로 밀리지 않게 설정 */
   height: 100vh;
-  background-color: #ccc; /* 회색 배경 */
-  padding: 20px; /* A4 용지 주변에 여백 추가 */
+  /* padding: 20px; A4 용지 주변에 여백 추가 */
   padding-top: 70px;
   margin-top: 30px;
 }

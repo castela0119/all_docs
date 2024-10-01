@@ -39,25 +39,55 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue' // onMounted를 vue에서 가져옴
 import { useRoute, useRouter } from 'vue-router'
 import jsPDF from 'jspdf' // jsPDF를 사용해 PDF로 내보내기
 
 const route = useRoute()
 const router = useRouter()
 
-// 전달받은 데이터를 route.params에서 추출
-const lenderName = route.params.lenderName
-const borrowerName = route.params.borrowerName
-const loanStartDate = route.params.loanStartDate
-const loanEndDate = route.params.loanEndDate
-const loanAmount = route.params.loanAmount
-const interestRate = route.params.interestRate
-const lenderIdNumber = route.params.lenderIdNumber
-const lenderAddress = route.params.lenderAddress
-const lenderPhoneNumber = route.params.lenderPhoneNumber
-const borrowerIdNumber = route.params.borrowerIdNumber
-const borrowerAddress = route.params.borrowerAddress
-const borrowerPhoneNumber = route.params.borrowerPhoneNumber
+// const { dataObj } = history.state // 이렇게 받는다.
+
+// 각 데이터를 ref로 선언
+const lenderName = ref('')
+const borrowerName = ref('')
+const loanStartDate = ref('')
+const loanEndDate = ref('')
+const loanAmount = ref('')
+const interestRate = ref('')
+const lenderIdNumber = ref('')
+const lenderAddress = ref('')
+const lenderPhoneNumber = ref('')
+const borrowerIdNumber = ref('')
+const borrowerAddress = ref('')
+const borrowerPhoneNumber = ref('')
+const currentDate = ref('')
+
+// onMounted에서 window.history.borrowObj 값을 가져와서 설정
+onMounted(() => {
+  const borrowObj = JSON.parse(localStorage.getItem('borrowObj'))
+
+  console.log('borrowObj :: ', borrowObj)
+
+  if (borrowObj) {
+    lenderName.value = borrowObj.lenderName
+    borrowerName.value = borrowObj.borrowerName
+    loanStartDate.value = borrowObj.loanStartDate
+    loanEndDate.value = borrowObj.loanEndDate
+    loanAmount.value = borrowObj.loanAmount
+    interestRate.value = borrowObj.interestRate
+    lenderIdNumber.value = borrowObj.lenderIdNumber
+    lenderAddress.value = borrowObj.lenderAddress
+    lenderPhoneNumber.value = borrowObj.lenderPhoneNumber
+    borrowerIdNumber.value = borrowObj.borrowerIdNumber
+    borrowerAddress.value = borrowObj.borrowerAddress
+    borrowerPhoneNumber.value = borrowObj.borrowerPhoneNumber
+  }
+})
+
+console.log('route.state :: ', route.state)
+console.log('route.params :: ', route.params)
+console.log('lenderName :: ', lenderName)
 
 // 문서 수정 페이지로 돌아가기
 const goToEditDocument = () => {
