@@ -5,8 +5,12 @@
       모두의 문서
     </div>
     <div>{{ title }}</div>
-    <div class="user-icon">
+    <div v-if="userName" class="user-info">
       <i class="fa fa-user-circle"></i>
+      {{ userName }} 님
+    </div>
+    <div v-else class="login-button">
+      <button @click="loginWithKakao">카카오 로그인</button>
     </div>
 
     <!-- 모달 -->
@@ -30,13 +34,14 @@ const isModalOpen = ref(false)
 const router = useRouter()
 const route = useRoute()
 
-const openModal = () => {
+const userName = ref(null) // 로그인한 사용자 이름 저장
 
-  console.log("route.name ::", route.name);
-  
+const openModal = () => {
+  console.log('route.name ::', route.name)
+
   if (route.name === 'Home') {
     // HomeView에서는 새로고침
-    window.location.reload();
+    window.location.reload()
   } else {
     // 다른 페이지에서는 모달 오픈
     isModalOpen.value = true
