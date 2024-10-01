@@ -110,7 +110,7 @@ const goToEditDocument = () => {
   localStorage.setItem('borrowObj', JSON.stringify(borrowObj))
 
   // borrowDocument 페이지로 이동
-  router.push({ name: 'borrowDocument' })
+  router.push({ name: 'BorrowDocument' })
 }
 
 // PDF로 내보내기 함수
