@@ -91,7 +91,26 @@ console.log('lenderName :: ', lenderName)
 
 // 문서 수정 페이지로 돌아가기
 const goToEditDocument = () => {
-  router.push({ name: 'BorrowDocument', params: route.params }) // 작성된 데이터를 유지한 채로 돌아감
+  const borrowObj = {
+    lenderName: lenderName.value,
+    borrowerName: borrowerName.value,
+    loanStartDate: loanStartDate.value,
+    loanEndDate: loanEndDate.value,
+    loanAmount: loanAmount.value,
+    interestRate: interestRate.value,
+    lenderIdNumber: lenderIdNumber.value,
+    lenderAddress: lenderAddress.value,
+    lenderPhoneNumber: lenderPhoneNumber.value,
+    borrowerIdNumber: borrowerIdNumber.value,
+    borrowerAddress: borrowerAddress.value,
+    borrowerPhoneNumber: borrowerPhoneNumber.value
+  }
+
+  // 데이터를 localStorage에 저장
+  localStorage.setItem('borrowObj', JSON.stringify(borrowObj))
+
+  // borrowDocument 페이지로 이동
+  router.push({ name: 'borrowDocument' })
 }
 
 // PDF로 내보내기 함수

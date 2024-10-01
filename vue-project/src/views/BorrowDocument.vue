@@ -129,7 +129,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 // Vue Router 사용 설정
@@ -153,6 +153,25 @@ const lenderPhoneNumber = ref('')
 const borrowerIdNumber = ref('')
 const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
+
+onMounted(() => {
+  const storedData = localStorage.getItem('borrowObj')
+  if (storedData) {
+    const borrowObj = JSON.parse(storedData)
+    lenderName.value = borrowObj.lenderName
+    borrowerName.value = borrowObj.borrowerName
+    loanStartDate.value = borrowObj.loanStartDate
+    loanEndDate.value = borrowObj.loanEndDate
+    loanAmount.value = borrowObj.loanAmount
+    interestRate.value = borrowObj.interestRate
+    lenderIdNumber.value = borrowObj.lenderIdNumber
+    lenderAddress.value = borrowObj.lenderAddress
+    lenderPhoneNumber.value = borrowObj.lenderPhoneNumber
+    borrowerIdNumber.value = borrowObj.borrowerIdNumber
+    borrowerAddress.value = borrowObj.borrowerAddress
+    borrowerPhoneNumber.value = borrowObj.borrowerPhoneNumber
+  }
+})
 
 // 금액을 한국 원화 형식으로 변환
 const formattedLoanAmount = computed(() => {
