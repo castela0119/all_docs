@@ -42,6 +42,7 @@
 import { ref, onMounted } from 'vue' // onMounted를 vue에서 가져옴
 import { useRoute, useRouter } from 'vue-router'
 import jsPDF from 'jspdf' // jsPDF를 사용해 PDF로 내보내기
+import html2canvas from 'html2canvas'
 
 const route = useRoute()
 const router = useRouter()
@@ -115,22 +116,29 @@ const goToEditDocument = () => {
 
 // PDF로 내보내기 함수
 const exportToPdf = () => {
-  const doc = new jsPDF({
-    format: 'a4'
+  const element = document.querySelector('.a4-paper') // PDF로 변환할 HTML 요소 선택
+
+  html2canvas(element, { scale: 2 }).then((canvas) => {
+    const imgData = canvas.toDataURL('image/png')
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    })
+
+    // const pageHeight = 297 // A4 높이
+
+    const imgWidth = 210 // A4 너비
+    const imgHeight = (canvas.height * imgWidth) / canvas.width
+
+    let position = 0
+
+    // 이미지를 PDF에 추가
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+
+    // PDF 저장
+    pdf.save('차용증.pdf')
   })
-
-  doc.text('차 용 증', 105, 20, { align: 'center' })
-  doc.text(`채권자: ${lenderName.value}`, 20, 40)
-  doc.text(`채무자: ${borrowerName.value}`, 20, 50)
-  doc.text(`주민등록번호: ${lenderIdNumber.value}`, 20, 60)
-  doc.text(`등본상 주소: ${borrowerAddress.value}`, 20, 70)
-  doc.text(`연락처: ${lenderPhoneNumber.value}`, 20, 80)
-  doc.text(`차용 금액: ${loanAmount.value}`, 20, 90)
-  doc.text(`대여 기간: ${loanStartDate.value} ~ ${loanEndDate.value}`, 20, 100)
-  doc.text(`이자율: ${interestRate.value}%`, 20, 110)
-
-  // PDF 저장
-  doc.save('차용증.pdf')
 }
 </script>
 
