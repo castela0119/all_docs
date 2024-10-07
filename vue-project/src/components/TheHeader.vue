@@ -5,7 +5,7 @@
       모두의 문서
     </div>
     <div>{{ title }}</div>
-     <!-- 사용자 정보 또는 로그인 버튼 -->
+    <!-- 사용자 정보 또는 로그인 버튼 -->
     <div v-if="nickname" class="user-info">
       <i class="fa fa-user-circle"></i> {{ nickname }} 님
       <button @click="logout">로그아웃</button>
@@ -41,93 +41,135 @@ const nickname = ref(null)
 
 // 카카오 로그인 초기화
 onMounted(() => {
-
   // 카카오 SDK 초기화
   if (!window.Kakao.isInitialized()) {
-    window.Kakao.init('245d67827f146d497d2f2a3867ea8eef'); // 여기에 카카오에서 발급받은 JavaScript 키 입력
-    console.log('Kakao SDK initialized');
+    window.Kakao.init('245d67827f146d497d2f2a3867ea8eef') // 여기에 카카오에서 발급받은 JavaScript 키 입력
+    console.log('Kakao SDK initialized')
   }
-  
+
   // localStorage에서 닉네임 불러오기 (로그인 상태 유지)
-  const storedNickname = localStorage.getItem('nickname');
+  const storedNickname = localStorage.getItem('nickname')
   if (storedNickname) {
-    nickname.value = storedNickname;
+    nickname.value = storedNickname
   } else {
     // 토큰 확인하여 로그인 상태 유지
-    displayToken();
+    displayToken()
   }
-});
+})
 
 // 카카오 로그인 함수
 const loginWithKakao = () => {
-  Kakao.Auth.authorize({
-    redirectUri: 'http://localhost:5173/oauth', // 카카오 개발자 사이트에 등록한 리디렉션 URI
-  });
-};
+  window.Kakao.Auth.authorize({
+    redirectUri: 'http://localhost:5173/oauth' // 카카오 개발자 사이트에 등록한 리디렉션 URI
+  })
+}
 
 // 로그인 상태 확인 및 토큰 저장
 const displayToken = () => {
-  const token = window.Kakao.Auth.getAccessToken();
-  
+  const token = window.Kakao.Auth.getAccessToken()
+
+  console.log('displayToken :: ', token)
+
   if (token) {
-    console.log('액세스 토큰 ~~~', token);  // 액세스 토큰이 존재하는지 확인
-    // localStorage.setItem('accessToken', token);  // 액세스 토큰을 localStorage에 저장
+    console.log('액세스 토큰 ~~~', token) // 액세스 토큰이 존재하는지 확인
+    localStorage.setItem('accessToken', token) // 액세스 토큰을 localStorage에 저장
 
     // 사용자 정보 요청
     window.Kakao.API.request({
       url: '/v2/user/me',
       success: (res) => {
-        nickname.value = res.properties.nickname; // 로그인한 사용자 이름 저장
-        localStorage.setItem('nickname', nickname.value); // 사용자 정보를 로컬 스토리지에 저장
-        console.log('로그인 성공:', nickname.value);
+        nickname.value = res.properties.nickname // 로그인한 사용자 이름 저장
+        localStorage.setItem('nickname', nickname.value) // 사용자 정보를 로컬 스토리지에 저장
+        console.log('로그인 성공:', nickname.value)
       },
       fail: (error) => {
-        console.error('사용자 정보 요청 실패:', error);
+        console.error('사용자 정보 요청 실패:', error)
       }
-    });
+    })
   } else {
-    console.error('액세스 토큰이 없습니다.');
+    console.log('액세스 토큰이 없습니다.')
   }
-};
+}
+
+// 쿠키 삭제 함수
+const deleteCookie = (name) => {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+}
 
 // 로그아웃 함수
 const logout = () => {
-  const accessToken = localStorage.getItem('accessToken'); // localStorage에서 액세스 토큰 가져오기
+  const accessToken = localStorage.getItem('accessToken') // localStorage에서 액세스 토큰 가져오기
+
+  console.log('Haeder accessToken ::', accessToken)
 
   if (!accessToken) {
-    console.error('액세스 토큰이 없습니다.');
-    return;
+    console.error('액세스 토큰이 없습니다.')
+    return
   }
 
-  // 클라이언트 측 로그아웃
-  window.Kakao.Auth.logout(() => {
-    nickname.value = null; // 로그아웃 후 사용자 이름 초기화
-    localStorage.removeItem('nickname'); // localStorage에서 사용자 정보 삭제
-    localStorage.removeItem('accessToken'); // localStorage에서 액세스 토큰 삭제
-    console.log('클라이언트 로그아웃 성공');
-  });
-
   // 서버 측 로그아웃 (카카오 로그아웃 API 호출)
-  fetch('https://kapi.kakao.com/v1/user/logout', {
+  fetch('https://kapi.kakao.com/v1/user/unlink', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${accessToken}`, // 액세스 토큰을 포함하여 서버 로그아웃 요청
-      'Content-Type': 'application/x-www-form-urlencoded', // 로그아웃 시 Content-Type 설정
-    },
+      'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8' // 로그아웃 시 Content-Type 설정
+    }
   })
     .then((response) => {
+      console.log('response :: ', response)
+
       if (response.ok) {
-        console.log('서버 로그아웃 성공');
+        console.log('서버 로그아웃 성공')
+        nickname.value = null // 로그아웃 후 사용자 이름 초기화
+
+        return response.json()
       } else {
         return response.json().then((data) => {
-          console.error('서버 로그아웃 실패:', data, '응답 상태:', response.status);
-        });
+          console.error('서버 로그아웃 실패:', data, '응답 상태:', response.status)
+        })
       }
     })
+    .then((data) => {
+      console.log('data :: ', data)
+
+      console.log('============ test1 ============ ')
+
+      // 클라이언트 측에서만 로그아웃 처리
+      // 서버로 추가 요청을 보내지 않음, 쿠키, 세션, 로컬 스토리지 삭제
+      localStorage.removeItem('nickname') // localStorage에서 사용자 정보 삭제
+      localStorage.removeItem('accessToken') // localStorage에서 액세스 토큰 삭제
+      console.log('클라이언트 로그아웃 성공')
+
+      console.log('============ test2 ============ ')
+
+      // 모든 쿠키 삭제
+      document.cookie.split(';').forEach((cookie) => {
+        const cookieName = cookie.split('=')[0].trim()
+        deleteCookie(cookieName)
+      })
+
+      console.log('============ test3 ============ ')
+
+      // 세션 스토리지 초기화
+      sessionStorage.clear()
+
+      // 모든 브라우저 캐시 삭제
+      caches.keys().then(function (names) {
+        for (let name of names) caches.delete(name)
+      })
+
+      console.log('============ test4 ============ ')
+
+      return data
+    })
     .catch((error) => {
-      console.error('서버 로그아웃 요청 중 오류 발생:', error);
-    });
-};
+      if (error.response && error.response.status === 401) {
+        console.error('이미 로그아웃 되었거나 토큰이 유효하지 않습니다.')
+      } else {
+        console.error('서버 로그아웃 요청 중 오류 발생:', error)
+      }
+    })
+}
 
 const openModal = () => {
   console.log('route.name ::', route.name)
