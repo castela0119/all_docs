@@ -4,6 +4,7 @@
     <div class="content-wrapper">
       <RouterView />
     </div>
+    <TheFooter />
   </div>
 </template>
 
@@ -11,6 +12,7 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import TheHeader from '@/components/TheHeader.vue'
+import TheFooter from './components/TheFooter.vue'
 
 // headerTitle 상태를 관리
 const headerTitle = ref('모두의 문서')

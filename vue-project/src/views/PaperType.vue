@@ -38,11 +38,16 @@
       </q-carousel>
     </div>
   </div>
-  <div>버튼1</div>
-  <div>버튼1</div>
-  <div>버튼1</div>
-  <div>버튼1</div>
-  <div>버튼1</div>
+  <div class="button-container">
+    <button
+      v-for="(document, index) in documents"
+      :key="index"
+      class="custom-button"
+      @click="goToPage(document.routeName)"
+    >
+      {{ document.name }}
+    </button>
+  </div>
 </template>
 
 <script setup>
@@ -51,6 +56,7 @@ import { useRouter } from 'vue-router'
 
 const slide = ref('')
 
+// documents 배열 선언
 const documents = ref([
   { name: '차용증', routeName: 'BorrowDocument' },
   { name: '근로계약서', routeName: 'EmploymentContract' },
@@ -184,5 +190,27 @@ const goToPage = (documentName) => {
 
 .clickable {
   cursor: pointer; /* 마우스 포인터가 손 모양으로 바뀜 */
+}
+
+.button-container {
+  display: flex;
+  flex-wrap: wrap; /* 여러 줄로 배치 가능하게 설정 */
+  justify-content: space-around; /* 버튼 간 간격을 고르게 배치 */
+  gap: 10px; /* 버튼 간격 설정 */
+}
+
+.custom-button {
+  flex: 1 1 calc(25% - 10px); /* 각 버튼을 25% 너비로 설정 (한 줄에 4개) */
+  padding: 10px;
+  background-color: #f0dc86;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.custom-button:hover {
+  background-color: #e3c896; /* 마우스 올릴 때 색상 변화 */
 }
 </style>
