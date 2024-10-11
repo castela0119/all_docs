@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <TheHeader />
     <main class="main-content">
       <h2>일반 문서부터 법적 문서까지 간편하게 작성</h2>
       <div class="steps">
@@ -15,17 +14,18 @@
   </div>
 </template>
 
-<script setup>
-import TheHeader from '@/components/TheHeader.vue'
-</script>
+<script setup></script>
 
 <style scoped>
 #app {
   text-align: center;
+  min-height: 100%; /* 전체 화면 높이를 차지하게 함 */
+  width: 100%; /* 전체 화면 너비를 차지하게 함 */
 }
 
 .main-content {
   padding: 40px 20px;
+  width: 100%;
 }
 
 .main-content h2 {

@@ -1,12 +1,15 @@
 <template>
-  <TheHeader :title="headerTitle"></TheHeader>
-  <TheView></TheView>
+  <div class="app-container">
+    <TheHeader />
+    <div class="content-wrapper">
+      <RouterView />
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import TheView from '@/views/TheView.vue'
 import TheHeader from '@/components/TheHeader.vue'
 
 // headerTitle 상태를 관리
@@ -26,3 +29,9 @@ watch(route, (newRoute) => {
   }
 })
 </script>
+
+<style lang="css" scoped>
+.app-container {
+  width: 100%;
+}
+</style>

@@ -1,18 +1,4 @@
 <template>
-  <div class="paper-selection-page">
-    <!-- 검색 부분 -->
-    <div class="search-container">
-      <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="문서 검색 하기 ex. 레포트, 차용증"
-        class="search-input"
-      />
-      <button class="search-button" @click="onSearch">
-        <i class="fa fa-search"></i>
-      </button>
-    </div>
-  </div>
   <div class="q-pa-md">
     <div class="q-gutter-md">
       <q-carousel
@@ -52,6 +38,11 @@
       </q-carousel>
     </div>
   </div>
+  <div>버튼1</div>
+  <div>버튼1</div>
+  <div>버튼1</div>
+  <div>버튼1</div>
+  <div>버튼1</div>
 </template>
 
 <script setup>
@@ -59,8 +50,6 @@ import { watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const slide = ref('')
-
-const searchQuery = ref('') // 검색어 상태
 
 const documents = ref([
   { name: '차용증', routeName: 'BorrowDocument' },
@@ -82,11 +71,6 @@ watch(
 
 // 라우터를 사용하기 위한 설정
 const router = useRouter()
-
-const onSearch = () => {
-  console.log('검색 실행: ', searchQuery.value)
-  // 검색 기능을 여기에 추가
-}
 
 // 페이지 이동 함수
 const goToPage = (documentName) => {
