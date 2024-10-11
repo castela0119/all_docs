@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-contents">
     <!-- 왼쪽 입력 폼 (스크롤 가능, 스크롤바 숨김) -->
     <div class="left-contents">
       <h2>금전 차용증 작성</h2>
@@ -90,7 +90,7 @@
       </div>
     </div>
 
-    <div class="right-content">
+    <div class="right-contents">
       <!-- 오른쪽 A4 용지 미리보기 (스크롤 없음) -->
       <div class="preview-section">
         <div class="a4-paper">
@@ -216,16 +216,16 @@ const handleComplete = () => {
 </script>
 
 <style scoped>
-.container {
-  display: flex; /* flexbox 레이아웃을 사용하여 자식 요소들을 가로로 배치 */
-  width: 100vw; /* 가로 화면 전체를 차지 */
-  height: 100vh; /* 세로 화면 전체를 차지 */
+.container-contents {
+  display: flex;
+  /* width: 100%; 가로 화면 전체를 차지 */
+  height: 1000px;
 }
 
 .form-section {
-  width: 340px;
-  height: 100%;
-  overflow-y: scroll;
+  /* width: 340px; */
+  /* height: 100%; */
+  /* overflow-y: scroll; */
   padding: 25px;
   background-color: rgb(230 230 230);
   position: fixed; /* 화면에 고정 */
@@ -252,18 +252,12 @@ const handleComplete = () => {
   height: 0;
 }
 
-.right-content {
+.right-contents {
   background-color: #ccc;
-  padding: 25px;
-  flex: 1; /* 남은 공간을 모두 차지 */
-  top: 25px; /* 상단에 맞춤 */
+  /* padding: 25px; */
+  flex: 1;
+  /* top: 25px; 상단에 맞춤 */
   height: 100%;
-}
-
-/* 스크롤바 숨기기 */
-.form-section::-webkit-scrollbar {
-  width: 0;
-  height: 0;
 }
 
 .section1 {
@@ -306,26 +300,29 @@ const handleComplete = () => {
 .preview-section {
   /* width: calc(100% - 340px); form-section의 너비를 제외한 나머지 너비 */
   /* margin-left: 340px; form-section의 너비만큼 왼쪽 여백 추가 */
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; /* A4 용지가 위로 밀리지 않게 설정 */
-  height: 100vh;
+  /* display: flex; */
+  justify-content: center; /* A4 용지를 중앙에 배치 */
+  /* align-items: flex-start; A4 용지가 위로 밀리지 않게 설정 */
+  width: 100%;
+  height: 1000px;
   /* padding: 20px; A4 용지 주변에 여백 추가 */
   /* padding-top: 70px; */
   /* margin-top: 30px; */
 }
 
 .a4-paper {
-  width: 210mm;
-  height: 297mm;
+  /* width: 210mm; */
+  /* height: 297mm; */
+  width: 100%;
+  height: 100%;
   padding: 20px;
   background-color: white;
   border: 1px solid #0a0909; /* 모든 면에 동일하게 검정선 추가 */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   font-family: 'Arial', sans-serif;
   position: relative;
-  margin-top: 0;
-  overflow: hidden;
+  /* margin-top: 0; */
+  /* overflow: hidden; */
 }
 
 .title {

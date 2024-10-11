@@ -20,7 +20,6 @@
 .footer {
   background-color: #f8f8f8;
   padding: 20px;
-  margin-top: 150px;
   text-align: center;
   font-size: 14px;
   color: #666;
