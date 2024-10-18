@@ -83,6 +83,7 @@ onMounted(() => {
     borrowerIdNumber.value = borrowObj.borrowerIdNumber
     borrowerAddress.value = borrowObj.borrowerAddress
     borrowerPhoneNumber.value = borrowObj.borrowerPhoneNumber
+    currentDate.value = borrowObj.currentDate
   }
 })
 
@@ -104,7 +105,8 @@ const goToEditDocument = () => {
     lenderPhoneNumber: lenderPhoneNumber.value,
     borrowerIdNumber: borrowerIdNumber.value,
     borrowerAddress: borrowerAddress.value,
-    borrowerPhoneNumber: borrowerPhoneNumber.value
+    borrowerPhoneNumber: borrowerPhoneNumber.value,
+    currentDate: currentDate.value
   }
 
   // 데이터를 localStorage에 저장
@@ -152,6 +154,7 @@ const exportToPdf = () => {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   font-family: 'Arial', sans-serif; /* 읽기 쉬운 폰트 설정 */
   line-height: 1.6; /* 줄 간격을 늘려 가독성 향상 */
+  margin-bottom: 40px;
 }
 
 .title {
