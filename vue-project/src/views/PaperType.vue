@@ -1,43 +1,4 @@
 <template>
-  <div class="q-pa-md">
-    <div class="q-gutter-md">
-      <q-carousel
-        v-model="slide"
-        transition-prev="slide"
-        transition-next="slide"
-        swipeable
-        animated
-        control-color="white"
-        prev-icon="arrow_left"
-        next-icon="arrow_right"
-        navigation
-        padding
-        arrows
-        height="300px"
-        class="bg-primary text-white shadow-1 rounded-borders"
-      >
-        <q-carousel-slide
-          v-for="(document, index) in documents"
-          :key="index"
-          :name="document.name"
-          class="column no-wrap flex-center"
-        >
-          <!-- Display the document image -->
-          <!-- <img :src="document.image" alt="document image" style="width: 56px; height: 56px" /> -->
-
-          <!-- Display the document name -->
-          <div class="q-mt-md text-center clickable" @click="goToPage(document.routeName)">
-            {{ document.name }}
-          </div>
-
-          <!-- Display formats if necessary -->
-          <!-- <div class="q-mt-md text-center">
-            {{ document.formats.join(', ') }}
-          </div> -->
-        </q-carousel-slide>
-      </q-carousel>
-    </div>
-  </div>
   <div class="button-container">
     <button
       v-for="(document, index) in documents"
