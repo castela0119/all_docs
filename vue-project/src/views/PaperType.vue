@@ -157,6 +157,10 @@ const goToPage = (documentName) => {
   display: flex;
   flex-wrap: wrap; /* 여러 줄로 배치 가능하게 설정 */
   justify-content: space-around; /* 버튼 간 간격을 고르게 배치 */
+  padding-top: 100px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 100px;
   gap: 10px; /* 버튼 간격 설정 */
 }
 
