@@ -2,12 +2,12 @@
   <footer class="footer">
     <p>© 2024 AllDocs. All rights reserved.</p>
     <p>
-      Created by: jin-bang | Contact:
+      Created by: Jin Byong Soo | Contact:
       <a href="mailto:castela0119@gmail.com">castela0119@gmail.com</a>
     </p>
     <p>
-      This website and its contents are protected under international copyright laws. Unauthorized
-      reproduction, distribution, or modification is strictly prohibited.
+      이 웹사이트와 해당 콘텐츠는 저작권법에 따라 보호됩니다. 무단 전재, 배포 또는 수정은 금지하고
+      있습니다.
     </p>
   </footer>
 </template>
