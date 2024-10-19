@@ -4,10 +4,15 @@
       v-for="(document, index) in documents"
       :key="index"
       class="custom-button"
-      @click="goToPage(document.routeName)"
+      :disabled="!document.usable"
+      @mouseenter="showTooltip(document)"
+      @mouseleave="hideTooltip"
+      @click="handleClick(document)"
     >
       {{ document.name }}
     </button>
+    <span v-if="tooltipVisible" class="tooltip">{{ tooltipMessage }}</span>
+    <!-- 툴팁 메시지 -->
   </div>
 </template>
 
@@ -19,10 +24,10 @@ const slide = ref('')
 
 // documents 배열 선언
 const documents = ref([
-  { name: '차용증', routeName: 'BorrowDocument' },
-  { name: '근로계약서', routeName: 'EmploymentContract' },
-  { name: '임대차계약서', routeName: 'LeaseContract' },
-  { name: '금전대차', routeName: 'LoanDocument' }
+  { name: '차용증', routeName: 'BorrowDocument', usable: true },
+  { name: '근로계약서', routeName: 'EmploymentContract', usable: false },
+  { name: '임대차계약서', routeName: 'LeaseContract', usable: false },
+  { name: '금전대차', routeName: 'LoanDocument', usable: false }
 ])
 
 // documents 배열이 변경될 때 첫 번째 슬라이드 설정
@@ -38,6 +43,25 @@ watch(
 
 // 라우터를 사용하기 위한 설정
 const router = useRouter()
+
+const tooltipMessage = ref('준비 중입니다') // 툴팁 메시지
+const tooltipVisible = ref(false) // 툴팁 표시 여부
+
+const showTooltip = (document) => {
+  if (!document.usable) {
+    tooltipVisible.value = true
+  }
+}
+
+const hideTooltip = () => {
+  tooltipVisible.value = false
+}
+
+const handleClick = (document) => {
+  if (document.usable) {
+    goToPage(document.routeName) // 페이지 이동 처리
+  }
+}
 
 // 페이지 이동 함수
 const goToPage = (documentName) => {
@@ -177,5 +201,15 @@ const goToPage = (documentName) => {
 
 .custom-button:hover {
   background-color: #e3c896; /* 마우스 올릴 때 색상 변화 */
+}
+
+.tooltip {
+  position: absolute;
+  background-color: #b3d1ff; /* 툴팁 배경색 */
+  color: #757171; /* 텍스트 색상 */
+  padding: 5px;
+  border-radius: 4px;
+  z-index: 10;
+  margin-top: 5px; /* 버튼 아래에 툴팁 위치 조정 */
 }
 </style>
