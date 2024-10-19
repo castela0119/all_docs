@@ -33,20 +33,30 @@
         <div class="form-group">
           <label>대여 기간</label>
           <div class="date-inputs">
-            <input v-model="loanStartDate" type="date" />
+            <input v-model="loanStartDate" type="date" class="date-picker" />
             <span>~</span>
-            <input v-model="loanEndDate" type="date" />
+            <input v-model="loanEndDate" type="date" class="date-picker" />
           </div>
         </div>
 
         <div class="form-group">
           <label>차용금액</label>
-          <input v-model="loanAmount" type="number" placeholder="차용금액을 입력하세요" />
+          <input
+            @input="onInput"
+            v-model="formattedLoanAmount"
+            type="text"
+            placeholder="차용금액을 입력하세요"
+          />
         </div>
 
         <div class="form-group">
           <label>연 이자율(%)</label>
-          <input v-model="interestRate" type="number" placeholder="연 이자율을 입력하세요" />
+          <input
+            v-model="interestRate"
+            @input="checkInterestRate"
+            type="number"
+            placeholder="연 이자율을 입력하세요"
+          />
         </div>
       </div>
       <div class="empty"></div>
@@ -55,7 +65,12 @@
         <h3>채권자 상세 정보</h3>
         <div class="form-group">
           <label>채권자 주민등록번호</label>
-          <input v-model="lenderIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
+          <input
+            v-model="lenderIdNumber"
+            @input="formatIdNumber"
+            type="text"
+            placeholder="주민등록번호를 입력하세요"
+          />
         </div>
         <div class="form-group">
           <label>채권자 주소</label>
@@ -71,7 +86,12 @@
         <h3>채무자 상세 정보</h3>
         <div class="form-group">
           <label>채무자 주민등록번호</label>
-          <input v-model="borrowerIdNumber" type="text" placeholder="주민등록번호를 입력하세요" />
+          <input
+            v-model="borrowerIdNumber"
+            @input="formatIdNumber"
+            type="text"
+            placeholder="주민등록번호를 입력하세요"
+          />
         </div>
         <div class="form-group">
           <label>채무자 주소 (등본상 주소)</label>
@@ -127,8 +147,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 
 // Vue Router 사용 설정
 const router = useRouter()
@@ -139,6 +160,7 @@ const lenderName = ref('')
 const loanStartDate = ref('') // 대여 시작일
 const loanEndDate = ref('') // 대여 종료일
 const loanAmount = ref('')
+const formattedLoanAmount = ref('')
 const interestRate = ref('')
 const currentDate = new Date().toLocaleDateString('ko-KR')
 
@@ -151,6 +173,8 @@ const lenderPhoneNumber = ref('')
 const borrowerIdNumber = ref('')
 const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
+
+const $q = useQuasar() // Quasar의 알림 사용
 
 onMounted(() => {
   const storedData = localStorage.getItem('borrowObj')
@@ -171,12 +195,62 @@ onMounted(() => {
   }
 })
 
-// 금액을 한국 원화 형식으로 변환
-const formattedLoanAmount = computed(() => {
-  return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(
-    loanAmount.value
-  )
-})
+// 숫자를 원화 형식으로 포맷하는 함수
+const formatCurrency = (num) => {
+  return new Intl.NumberFormat('ko-KR', {
+    style: 'currency',
+    currency: 'KRW',
+    maximumFractionDigits: 0 // 소수점 이하 표시하지 않음
+  }).format(num)
+}
+
+// input 이벤트 발생 시 숫자를 포맷하여 formattedLoanAmount에 저장
+const onInput = (event) => {
+  const inputValue = event.target.value.replace(/[₩,]/g, '') // 기존 원화 기호 및 콤마 제거
+  if (!isNaN(inputValue) && inputValue !== '') {
+    // 숫자인 경우만 포맷 적용
+    loanAmount.value = inputValue
+    formattedLoanAmount.value = formatCurrency(inputValue)
+  } else {
+    formattedLoanAmount.value = '' // 유효하지 않은 입력일 경우 빈 값 처리
+  }
+}
+
+// 연 이자율을 체크하는 함수
+const checkInterestRate = () => {
+  if (interestRate.value > 20) {
+    $q.notify({
+      type: 'warning',
+      message: '2024년 기준, 연 20% 이자를 초과할 수 없습니다.',
+      position: 'top',
+      timeout: 3000
+    })
+    interestRate.value = 20 // 이자율을 20%로 제한
+  }
+}
+
+// 주민등록번호 입력 시 포맷팅 및 제한
+const formatIdNumber = () => {
+  let inputValue = lenderIdNumber.value.replace(/\D/g, '') // 숫자 이외의 문자 제거
+
+  // 6자리 초과하면 하이픈 추가
+  if (inputValue.length > 6) {
+    inputValue = `${inputValue.slice(0, 6)}-${inputValue.slice(6)}`
+  }
+
+  // 주민등록번호가 숫자 7자리를 넘지 않도록 제한
+  if (inputValue.length > 8) {
+    $q.notify({
+      type: 'warning',
+      message: '주민번호 뒷자리는 수집하지 않습니다. 문서 출력 후 직접 입력해주세요.',
+      position: 'top',
+      timeout: 3000
+    })
+    inputValue = inputValue.slice(0, 8) // 숫자 7자리까지만 유지 (980101-1)
+  }
+
+  lenderIdNumber.value = inputValue // 포맷된 값으로 업데이트
+}
 
 const handleInput1 = (event) => {
   lenderName.value = event.target.value
@@ -345,6 +419,7 @@ ul {
 /* 가독성을 위한 상하 여백 */
 .form-group {
   margin-top: 7px; /* 상하 간격을 더 넓게 */
+  margin-right: 5px;
 }
 
 .form-group input,
@@ -380,18 +455,14 @@ li {
 .date-inputs {
   display: flex;
   align-items: center;
-  margin-top: 8px; /* 라벨과 날짜 입력 필드 사이 간격 추가 */
+  /* margin-top: 8px; 라벨과 날짜 입력 필드 사이 간격 추가 */
 }
 
 .date-inputs input {
-  width: 48%;
+  width: 128px;
   padding: 10px;
   border-radius: 4px;
   border: 1px solid #ccc;
-}
-
-.date-inputs span {
-  margin: 0 10px;
 }
 
 .button-group {
