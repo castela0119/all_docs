@@ -62,7 +62,7 @@ const lenderPhoneNumber = ref('')
 const borrowerIdNumber = ref('')
 const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
-const currentDate = ref('')
+const currentDate = new Date().toLocaleDateString('ko-KR')
 
 // onMounted에서 window.history.borrowObj 값을 가져와서 설정
 onMounted(() => {
@@ -83,7 +83,6 @@ onMounted(() => {
     borrowerIdNumber.value = borrowObj.borrowerIdNumber
     borrowerAddress.value = borrowObj.borrowerAddress
     borrowerPhoneNumber.value = borrowObj.borrowerPhoneNumber
-    currentDate.value = borrowObj.currentDate
   }
 })
 
@@ -105,8 +104,7 @@ const goToEditDocument = () => {
     lenderPhoneNumber: lenderPhoneNumber.value,
     borrowerIdNumber: borrowerIdNumber.value,
     borrowerAddress: borrowerAddress.value,
-    borrowerPhoneNumber: borrowerPhoneNumber.value,
-    currentDate: currentDate.value
+    borrowerPhoneNumber: borrowerPhoneNumber.value
   }
 
   // 데이터를 localStorage에 저장
