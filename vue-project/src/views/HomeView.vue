@@ -5,7 +5,7 @@
       <div class="steps">
         <div class="step">STEP1<br />문서 선택</div>
         <div class="step">STEP2<br />템플릿에 작성</div>
-        <div class="step">STEP3<br />문서 추출하기<br /><small>PDF or Word</small></div>
+        <div class="step">STEP3<br />문서 추출하기<br /><small>PDF</small></div>
       </div>
       <RouterLink to="/paper-type">
         <button class="select-button">문서 선택 하기</button>

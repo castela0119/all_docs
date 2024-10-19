@@ -1,6 +1,6 @@
 <template>
   <footer class="footer">
-    <p>© 2024 AllDocs. All rights reserved.</p>
+    <p>© 2024 All-Docs. All rights reserved.</p>
     <p>
       Created by: Jin Byong Soo | Contact:
       <a href="mailto:castela0119@gmail.com">castela0119@gmail.com</a>
