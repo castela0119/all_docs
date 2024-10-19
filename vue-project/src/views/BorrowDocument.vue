@@ -210,7 +210,7 @@ const nameInput = (type, event) => {
   // 입력값을 직접 설정
   name.value = event.target.value.trim() // 공백 제거
 
-  // 총 14자 제한
+  // 총 16자 제한
   const maxChars = 16
 
   if (name.value.length > maxChars) {
