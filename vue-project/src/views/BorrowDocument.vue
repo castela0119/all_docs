@@ -10,17 +10,16 @@
           <label>채권자 이름</label>
           <input
             v-model="lenderName"
-            @input="handleInput1"
+            @input="nameInput('lender', $event)"
             type="text"
             placeholder="채권자 이름을 입력하세요"
           />
         </div>
-
         <div class="form-group">
           <label>채무자 이름</label>
           <input
-            :value="borrowerName"
-            @input="handleInput2"
+            v-model="borrowerName"
+            @input="nameInput('borrower', $event)"
             type="text"
             placeholder="채무자 이름을 입력하세요"
           />
@@ -205,6 +204,26 @@ onMounted(() => {
   }
 })
 
+const nameInput = (type, event) => {
+  const name = type === 'lender' ? lenderName : borrowerName
+
+  // 입력값을 직접 설정
+  name.value = event.target.value.trim() // 공백 제거
+
+  // 총 14자 제한
+  const maxChars = 16
+
+  if (name.value.length > maxChars) {
+    name.value = name.value.slice(0, maxChars)
+    $q.notify({
+      type: 'warning',
+      message: '이름은 16자까지만 입력 가능합니다.',
+      position: 'top',
+      timeout: 3000
+    })
+  }
+}
+
 // 숫자를 원화 형식으로 포맷하는 함수
 const formatCurrency = (num) => {
   return new Intl.NumberFormat('ko-KR', {
@@ -284,14 +303,6 @@ const formatPhoneNumber = (type) => {
   }
 
   phoneNumber.value = inputValue // 포맷된 값으로 업데이트
-}
-
-const handleInput1 = (event) => {
-  lenderName.value = event.target.value
-}
-
-const handleInput2 = (event) => {
-  borrowerName.value = event.target.value
 }
 
 const goToPaperType = () => {
