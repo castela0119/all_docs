@@ -190,11 +190,11 @@ const closeModal = () => {
 // 현재 경로에 따라 모달의 내용을 동적으로 설정
 const modalContent = computed(() => {
   if (route.name === 'PaperType') {
-    return '문서작성을 취소하시겠습니까? \n 검색한 내역이 사라집니다.'
+    return '문서선택을 취소하시겠습니까? \n 홈으로 이동합니다.'
   } else if (route.name === 'BorrowDocument') {
-    return '문서작성을 취소하시겠습니까? \n 작성한 내용이 사라집니다.'
+    return '문서작성을 취소하시겠습니까? \n 작성한 내용이 사라질 수 있습니다.'
   } else {
-    return '기본 내용입니다'
+    return '홈으로 이동하시겠습니까?'
   }
 })
 
