@@ -78,7 +78,12 @@
         </div>
         <div class="form-group">
           <label>채권자 전화번호</label>
-          <input v-model="lenderPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
+          <input
+            v-model="lenderPhoneNumber"
+            @input="formatPhoneNumber('lender')"
+            type="text"
+            placeholder="전화번호를 입력하세요"
+          />
         </div>
       </div>
       <div class="empty"></div>
@@ -99,7 +104,12 @@
         </div>
         <div class="form-group">
           <label>채무자 전화번호</label>
-          <input v-model="borrowerPhoneNumber" type="text" placeholder="전화번호를 입력하세요" />
+          <input
+            v-model="borrowerPhoneNumber"
+            @input="formatPhoneNumber('borrower')"
+            type="text"
+            placeholder="전화번호를 입력하세요"
+          />
         </div>
       </div>
 
@@ -250,6 +260,30 @@ const formatIdNumber = () => {
   }
 
   lenderIdNumber.value = inputValue // 포맷된 값으로 업데이트
+}
+
+// 전화번호 포맷팅 함수
+const formatPhoneNumber = (type) => {
+  // 해당 전화번호 변수 선택(조건부 연산자 문법)
+  const phoneNumber = type === 'lender' ? lenderPhoneNumber : borrowerPhoneNumber
+
+  // 입력값에서 숫자만 남기기
+  let inputValue = phoneNumber.value.replace(/\D/g, '')
+
+  // 번호 형식으로 변환
+  if (inputValue.length > 3) {
+    inputValue = `${inputValue.slice(0, 3)}-${inputValue.slice(3)}`
+  }
+  if (inputValue.length > 8) {
+    inputValue = `${inputValue.slice(0, 8)}-${inputValue.slice(8)}`
+  }
+
+  // 11자리 전화번호로 제한 (010-1234-1234)
+  if (inputValue.length > 13) {
+    inputValue = inputValue.slice(0, 13)
+  }
+
+  phoneNumber.value = inputValue // 포맷된 값으로 업데이트
 }
 
 const handleInput1 = (event) => {
