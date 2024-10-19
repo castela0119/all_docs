@@ -62,7 +62,7 @@ const lenderPhoneNumber = ref('')
 const borrowerIdNumber = ref('')
 const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
-const currentDate = ref('')
+const currentDate = new Date().toLocaleDateString('ko-KR')
 
 // onMounted에서 window.history.borrowObj 값을 가져와서 설정
 onMounted(() => {
@@ -152,6 +152,7 @@ const exportToPdf = () => {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   font-family: 'Arial', sans-serif; /* 읽기 쉬운 폰트 설정 */
   line-height: 1.6; /* 줄 간격을 늘려 가독성 향상 */
+  margin-bottom: 40px;
 }
 
 .title {

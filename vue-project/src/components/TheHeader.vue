@@ -190,11 +190,11 @@ const closeModal = () => {
 // 현재 경로에 따라 모달의 내용을 동적으로 설정
 const modalContent = computed(() => {
   if (route.name === 'PaperType') {
-    return '문서작성을 취소하시겠습니까? \n 검색한 내역이 사라집니다.'
+    return '문서선택을 취소하시겠습니까? \n 홈으로 이동합니다.'
   } else if (route.name === 'BorrowDocument') {
-    return '문서작성을 취소하시겠습니까? \n 작성한 내용이 사라집니다.'
+    return '문서작성을 취소하시겠습니까? \n 작성한 내용이 사라질 수 있습니다.'
   } else {
-    return '기본 내용입니다'
+    return '홈으로 이동하시겠습니까?'
   }
 })
 
@@ -206,17 +206,16 @@ const confirmModal = () => {
 
 <style scoped>
 .app-header {
-  position: fixed; /* 화면 상단에 고정되도록 설정 */
-  top: 0; /* 상단 위치를 0으로 설정 */
-  left: 0; /* 좌측 위치를 0으로 설정 */
+  /* position: fixed; 화면 상단에 고정되도록 설정 */
+  /* top: 0; 상단 위치를 0으로 설정 */
+  /* left: 0; 좌측 위치를 0으로 설정 */
   width: 100%; /* 너비를 100%로 설정하여 화면 가로 전체를 차지 */
   display: flex; /* 자식 요소들을 플렉스 박스로 배치 */
-  justify-content: space-between; /* 자식 요소들 간의 여백을 양쪽 끝에 배치 */
-  align-items: center; /* 수직 정렬을 가운데로 설정 */
+  /* justify-content: space-between; 자식 요소들 간의 여백을 양쪽 끝에 배치 */
+  /* align-items: center; 수직 정렬을 가운데로 설정 */
   background-color: #d4d7d6; /* 배경색을 설정 */
-  padding: 20px; /* padding을 20px로 늘려 높이 증가 */
-  height: 45px; /* 명시적으로 높이를 60px로 설정 */
-  z-index: 1000; /* 다른 요소 위에 배치될 수 있도록 z-index 설정 */
+  padding: 10px; /* padding을 20px로 늘려 높이 증가 */
+  /* height: 45px; 명시적으로 높이를 60px로 설정 */
 }
 
 .logo {
