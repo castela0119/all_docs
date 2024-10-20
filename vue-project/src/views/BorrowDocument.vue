@@ -2,7 +2,24 @@
   <div class="container-contents">
     <!-- 왼쪽 입력 폼 (스크롤 가능, 스크롤바 숨김) -->
     <div class="left-contents">
-      <h2>금전 차용증 작성</h2>
+      <div class="header-container">
+        <h2>금전 차용증 작성</h2>
+        <button class="btn btn-save" @click="confirmSave" v-if="userName">저장</button>
+      </div>
+
+      <!-- 저장 버튼 추가 -->
+      <!-- 저장 확인 모달 -->
+      <q-dialog v-model="isConfirmModalOpen">
+        <q-card>
+          <q-card-section>
+            <p>저장 시 문서를 수정할 수 없습니다. 저장하시겠습니까?</p>
+          </q-card-section>
+          <q-card-actions>
+            <q-btn label="아니요" @click="closeConfirmModal" />
+            <q-btn label="예" @click="saveContract" color="primary" />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
 
       <!-- 추가 입력 필드 -->
       <div class="section1">
@@ -158,7 +175,14 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
+import { useQuasar, Notify } from 'quasar'
+
+const isConfirmModalOpen = ref(false) // 확인 모달 열기 상태
+
+// 저장 확인 함수
+const confirmSave = () => {
+  isConfirmModalOpen.value = true // 확인 모달 열기
+}
 
 // Vue Router 사용 설정
 const router = useRouter()
@@ -185,6 +209,8 @@ const borrowerPhoneNumber = ref('')
 
 const $q = useQuasar() // Quasar의 알림 사용
 
+const userName = ref('')
+
 onMounted(() => {
   const storedData = localStorage.getItem('borrowObj')
   if (storedData) {
@@ -202,7 +228,19 @@ onMounted(() => {
     borrowerAddress.value = borrowObj.borrowerAddress
     borrowerPhoneNumber.value = borrowObj.borrowerPhoneNumber
   }
+
+  const userInfo = getUserInfoFromCookie()
+  if (userInfo && userInfo.name) {
+    userName.value = userInfo.name // Save the user name to the reactive variable
+  }
 })
+
+// Function to read user info from cookies
+const getUserInfoFromCookie = () => {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; userInfo=`)
+  if (parts.length === 2) return JSON.parse(parts.pop().split(';').shift())
+}
 
 const nameInput = (type, event) => {
   const name = type === 'lender' ? lenderName : borrowerName
@@ -332,6 +370,59 @@ const handleComplete = () => {
   // 페이지 이동
   router.push({ name: 'BorrowDocumentCmpl' })
 }
+
+// 문서 저장 함수
+const saveContract = async () => {
+  const contractData = {
+    lenderName: lenderName.value,
+    borrowerName: borrowerName.value,
+    loanStartDate: loanStartDate.value,
+    loanEndDate: loanEndDate.value,
+    formattedLoanAmount: formattedLoanAmount.value,
+    interestRate: interestRate.value,
+    lenderIdNumber: lenderIdNumber.value,
+    lenderAddress: lenderAddress.value,
+    lenderPhoneNumber: lenderPhoneNumber.value,
+    borrowerIdNumber: borrowerIdNumber.value,
+    borrowerAddress: borrowerAddress.value,
+    borrowerPhoneNumber: borrowerPhoneNumber.value
+  }
+
+  try {
+    const response = await fetch('http://localhost:8080/api/contracts', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(contractData)
+    })
+
+    if (response.ok) {
+      const savedContract = await response.json()
+      console.log('문서가 저장되었습니다:', savedContract)
+
+      // 추가 처리 (예: 알림 표시 등)
+      // 모달과 메시지 상태 업데이트
+      isConfirmModalOpen.value = false // 모달 닫기
+      // 토스트 메시지 표시
+      Notify.create({
+        message: '저장되었습니다.',
+        type: 'positive', // 토스트 타입: 'positive', 'negative', 'info', 'warning'
+        position: 'top', // 토스트 위치: 'top', 'bottom', 'left', 'right', 'center'
+        timeout: 2000 // 2초 후 자동으로 사라짐
+      })
+    } else {
+      console.error('문서 저장 실패:', response.statusText)
+    }
+  } catch (error) {
+    console.error('문서 저장 중 오류 발생:', error)
+  }
+}
+
+// 모달 닫기 함수
+const closeConfirmModal = () => {
+  isConfirmModalOpen.value = false // 모달 닫기
+}
 </script>
 
 <style scoped>
@@ -339,6 +430,12 @@ const handleComplete = () => {
   display: flex;
   /* width: 100%; 가로 화면 전체를 차지 */
   height: 1000px;
+}
+
+.header-container {
+  display: flex; /* Flexbox 사용 */
+  justify-content: space-between; /* 요소 사이에 공간 배치 */
+  align-items: center; /* 수직 중앙 정렬 */
 }
 
 .form-section {
