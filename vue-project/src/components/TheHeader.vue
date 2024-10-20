@@ -2,12 +2,14 @@
   <header class="app-header">
     <div class="logo" @click="openModal">
       <img src="@/assets/logo.png" alt="Logo" />
-      모두의 문서
+      <span v-if="userName">{{ userName }}의 문서</span>
+      <span v-else>모두의 문서</span>
     </div>
     <div>{{ title }}</div>
     <!-- 사용자 정보 또는 로그인 버튼 -->
     <div v-if="userName" class="user-info">
-      <i class="fa fa-user-circle"></i> {{ userName }} 님
+      <button class="dashboard-button" @click="goToDashBoard">보관함</button>
+      <!-- 프로필 버튼 추가 -->
       <button @click="kakaoLogout">로그아웃</button>
     </div>
     <div v-else class="login-button">
@@ -39,6 +41,12 @@ const route = useRoute()
 
 // 사용자 이름을 저장할 reactive 변수
 const userName = ref('')
+
+// 프로필 페이지로 이동하는 메서드
+const goToDashBoard = () => {
+  // 프로필 페이지로의 이동 로직
+  window.location.href = '/dashboard' // 원하는 프로필 경로로 변경
+}
 
 // 카카오 로그인 초기화
 onMounted(() => {
