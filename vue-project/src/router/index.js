@@ -4,12 +4,18 @@ import PaperType from '@/views/PaperType.vue' // PaperType 페이지
 import BorrowDocument from '@/views/BorrowDocument.vue'
 import BorrowDocumentCmpl from '@/views/BorrowDocumentCmpl.vue'
 import OAuthRedirect from '@/views/OAuthRedirect.vue'
+import DashBoard from '@/views/DashBoard.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: HomeView
+  },
+  {
+    path: '/dashboard',
+    name: 'DashBoard',
+    component: DashBoard
   },
   {
     path: '/paper-type',
