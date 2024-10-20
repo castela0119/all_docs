@@ -18,7 +18,12 @@ export default defineConfig({
     }
   },
   server: {
-    port:5173, // 5173 포트 사용
-    host: '0.0.0.0', // 모든 네트워크 인터페이스에서 접속 가능
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   }
 })
