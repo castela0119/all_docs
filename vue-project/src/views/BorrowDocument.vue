@@ -83,7 +83,7 @@
           <label>채권자 주민등록번호</label>
           <input
             v-model="lenderIdNumber"
-            @input="formatIdNumber"
+            @input="formatIdNumber('lender')"
             type="text"
             placeholder="주민등록번호를 입력하세요"
           />
@@ -109,7 +109,7 @@
           <label>채무자 주민등록번호</label>
           <input
             v-model="borrowerIdNumber"
-            @input="formatIdNumber"
+            @input="formatIdNumber('borrower')"
             type="text"
             placeholder="주민등록번호를 입력하세요"
           />
@@ -296,9 +296,12 @@ const checkInterestRate = () => {
   }
 }
 
-// 주민등록번호 입력 시 포맷팅 및 제한
-const formatIdNumber = () => {
-  let inputValue = lenderIdNumber.value.replace(/\D/g, '') // 숫자 이외의 문자 제거
+// 주민등록번호 포맷팅 및 제한
+const formatIdNumber = (type) => {
+  // 선택된 타입에 따라 해당하는 주민등록번호를 가져옴
+  const idNumber = type === 'lender' ? lenderIdNumber : borrowerIdNumber
+
+  let inputValue = idNumber.value.replace(/\D/g, '') // 숫자 이외의 문자 제거
 
   // 6자리 초과하면 하이픈 추가
   if (inputValue.length > 6) {
@@ -316,7 +319,12 @@ const formatIdNumber = () => {
     inputValue = inputValue.slice(0, 8) // 숫자 7자리까지만 유지 (980101-1)
   }
 
-  lenderIdNumber.value = inputValue // 포맷된 값으로 업데이트
+  // 포맷된 값으로 업데이트
+  if (type === 'lender') {
+    lenderIdNumber.value = inputValue
+  } else {
+    borrowerIdNumber.value = inputValue
+  }
 }
 
 // 전화번호 포맷팅 함수
