@@ -4,6 +4,8 @@ import PaperType from '@/views/PaperType.vue' // PaperType 페이지
 import BorrowDocument from '@/views/BorrowDocument.vue'
 import BorrowDocumentCmpl from '@/views/BorrowDocumentCmpl.vue'
 import OAuthRedirect from '@/views/OAuthRedirect.vue'
+import BorrowDocumentGuest from '@/views/guest/BorrowDocumentGuest.vue'
+import BorrowDocumentCmplGuest from '@/views/guest/BorrowDocumentCmplGuest.vue'
 
 const routes = [
   {
@@ -22,9 +24,19 @@ const routes = [
     component: BorrowDocument
   },
   {
+    path: '/borrow-document-guest',
+    name: 'BorrowDocumentGuest',
+    component: BorrowDocumentGuest // 비회원 전용 BorrowDocument 페이지
+  },
+  {
     path: '/borrow-document-cmpl',
     name: 'BorrowDocumentCmpl',
     component: BorrowDocumentCmpl
+  },
+  {
+    path: '/borrow-document-cmpl-guest',
+    name: 'BorrowDocumentCmplGuest',
+    component: BorrowDocumentCmplGuest // 비회원 전용 BorrowDocumentCmpl 페이지
   },
   {
     path: '/oauth',
