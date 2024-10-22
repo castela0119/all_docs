@@ -11,13 +11,13 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import TheHeader from '@/components/TheHeader.vue'
+import TheHeader from '@/components/TheHeader2.vue'
 import TheFooter from './components/TheFooter.vue'
 
 // headerTitle 상태를 관리
 const headerTitle = ref('모두의 문서')
 
-// 현재 라우트를 가져오는 훅
+// 현재 경로를 확인하여 모달이 필요한 경우에만 띄우는 로직
 const route = useRoute()
 
 // 라우트가 변경될 때마다 title 업데이트
