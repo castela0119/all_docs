@@ -67,8 +67,9 @@ const handleRegisterSuccess = (userNickname) => {
 // 로그아웃 처리
 const logout = () => {
   localStorage.removeItem('nickname')
-  nickname.value = null
-  alert('로그아웃되었습니다.')
+  localStorage.removeItem('token')
+  nickname.value = null // Vue 상태에서 닉네임 제거
+  alert('로그아웃 되었습니다.')
 }
 </script>
 
