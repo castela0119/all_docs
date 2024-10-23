@@ -73,6 +73,9 @@ const closeModal = () => {
 const handleLoginSuccess = (userNickname) => {
   nickname.value = userNickname
   localStorage.setItem('nickname', userNickname)
+
+  // 홈으로 리다이렉트
+  router.push({ name: 'Home' }) // 'Home' 라우트로 이동
 }
 
 // 회원가입 성공 처리
@@ -87,6 +90,9 @@ const logout = () => {
   authStore.clearToken() // 로그아웃 시 토큰 제거
   nickname.value = null // Vue 상태에서 닉네임 제거
   alert('로그아웃 되었습니다.')
+
+  // 홈으로 리다이렉트
+  router.push({ name: 'Home' }) // 'Home' 라우트로 이동
 }
 
 const goToStorage = () => {
