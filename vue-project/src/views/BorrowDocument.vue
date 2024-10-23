@@ -115,7 +115,7 @@
       <!-- 작성 완료 버튼 추가 -->
       <div class="button-group">
         <button class="btn btn-left" @click="goToPaperType">문서선택</button>
-        <button class="btn btn-right" @click="handleComplete">작성완료</button>
+        <button class="btn btn-right" @click="handleComplete">저장</button>
       </div>
     </div>
 
@@ -159,6 +159,7 @@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import axios from 'axios'
 
 // Vue Router 사용 설정
 const router = useRouter()
@@ -185,24 +186,7 @@ const borrowerPhoneNumber = ref('')
 
 const $q = useQuasar() // Quasar의 알림 사용
 
-onMounted(() => {
-  const storedData = localStorage.getItem('borrowObj')
-  if (storedData) {
-    const borrowObj = JSON.parse(storedData)
-    lenderName.value = borrowObj.lenderName
-    borrowerName.value = borrowObj.borrowerName
-    loanStartDate.value = borrowObj.loanStartDate
-    loanEndDate.value = borrowObj.loanEndDate
-    loanAmount.value = borrowObj.loanAmount
-    interestRate.value = borrowObj.interestRate
-    lenderIdNumber.value = borrowObj.lenderIdNumber
-    lenderAddress.value = borrowObj.lenderAddress
-    lenderPhoneNumber.value = borrowObj.lenderPhoneNumber
-    borrowerIdNumber.value = borrowObj.borrowerIdNumber
-    borrowerAddress.value = borrowObj.borrowerAddress
-    borrowerPhoneNumber.value = borrowObj.borrowerPhoneNumber
-  }
-})
+onMounted(() => {})
 
 const nameInput = (type, event) => {
   const name = type === 'lender' ? lenderName : borrowerName
@@ -310,27 +294,55 @@ const goToPaperType = () => {
   router.push({ name: 'PaperType' })
 }
 
-const handleComplete = () => {
-  const borrowObj = {
-    lenderName: lenderName.value,
-    borrowerName: borrowerName.value,
-    loanStartDate: loanStartDate.value,
-    loanEndDate: loanEndDate.value,
-    loanAmount: loanAmount.value,
-    interestRate: interestRate.value,
-    lenderIdNumber: lenderIdNumber.value,
-    lenderAddress: lenderAddress.value,
-    lenderPhoneNumber: lenderPhoneNumber.value,
-    borrowerIdNumber: borrowerIdNumber.value,
-    borrowerAddress: borrowerAddress.value,
-    borrowerPhoneNumber: borrowerPhoneNumber.value
+const handleComplete = async () => {
+  // 로그인된 사용자의 ID (예: localStorage나 Pinia 등에서 가져온다고 가정)
+  const userId = localStorage.getItem('userId')
+
+  const loanContract = {
+    userId: userId, // 사용자 ID
+    lenderName: lenderName.value, // 채권자 이름
+    borrowerName: borrowerName.value, // 채무자 이름
+    loanStartDate: loanStartDate.value, // 대출 시작일
+    loanEndDate: loanEndDate.value, // 대출 종료일
+    loanAmount: loanAmount.value, // 대출 금액
+    interestRate: interestRate.value, // 이자율
+    lenderIdNumber: lenderIdNumber.value, // 채권자 주민등록번호
+    lenderAddress: lenderAddress.value, // 채권자 주소
+    lenderPhoneNumber: lenderPhoneNumber.value, // 채권자 전화번호
+    borrowerIdNumber: borrowerIdNumber.value, // 채무자 주민등록번호
+    borrowerAddress: borrowerAddress.value, // 채무자 주소
+    borrowerPhoneNumber: borrowerPhoneNumber.value // 채무자 전화번호
   }
 
-  // localStorage에 데이터를 저장
-  localStorage.setItem('borrowObj', JSON.stringify(borrowObj))
+  try {
+    // API 요청을 서버로 전송 (POST)
+    const response = await axios.post('http://localhost:8080/api/loanContracts', loanContract)
 
-  // 페이지 이동
-  router.push({ name: 'BorrowDocumentCmpl' })
+    // 성공적으로 응답을 받은 경우 response를 콘솔에 출력
+    console.log('API Response:', response)
+
+    // 성공 알림
+    $q.notify({
+      type: 'positive',
+      message: '문서가 성공적으로 저장되었습니다!',
+      position: 'top',
+      timeout: 3000
+    })
+
+    // 성공적으로 저장되면 상세보기 페이지로 이동
+    router.push({ name: 'BorrowDocumentDetail' })
+  } catch (error) {
+    // 오류 처리 및 오류 메시지 출력
+    console.error('API Error:', error.response ? error.response : error.message)
+
+    // 오류 알림
+    $q.notify({
+      type: 'negative',
+      message: '문서 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
+      position: 'top',
+      timeout: 3000
+    })
+  }
 }
 </script>
 
