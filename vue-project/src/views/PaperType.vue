@@ -47,6 +47,11 @@ const router = useRouter()
 const tooltipMessage = ref('준비 중입니다') // 툴팁 메시지
 const tooltipVisible = ref(false) // 툴팁 표시 여부
 
+// 로그인 여부를 확인하는 함수
+const isLoggedIn = () => {
+  return !!localStorage.getItem('userToken') // 예시로 userToken을 확인, 실제 프로젝트에서는 적절한 토큰 이름 사용
+}
+
 const showTooltip = (document) => {
   if (!document.usable) {
     tooltipVisible.value = true
@@ -57,17 +62,28 @@ const hideTooltip = () => {
   tooltipVisible.value = false
 }
 
+// 버튼 클릭 시 처리 함수
 const handleClick = (document) => {
   if (document.usable) {
-    goToPage(document.routeName) // 페이지 이동 처리
+    // 로그인 여부에 따라 다른 페이지로 이동
+    if (document.routeName === 'BorrowDocument') {
+      if (isLoggedIn()) {
+        router.push({ name: 'BorrowDocument' }) // 로그인된 사용자는 BorrowDocument로 이동
+      } else {
+        router.push({ name: 'BorrowDocumentGuest' }) // 로그인되지 않은 사용자는 BorrowDocumentGuest로 이동
+      }
+    } else {
+      // 다른 문서는 아직 usable이 false이므로 이동하지 않음
+      console.log('문서 사용 불가')
+    }
   }
 }
 
 // 페이지 이동 함수
-const goToPage = (documentName) => {
-  console.log('documentName', documentName)
-  router.push({ name: documentName })
-}
+// const goToPage = (documentName) => {
+//   console.log('documentName', documentName)
+//   router.push({ name: documentName })
+// }
 </script>
 
 <style scoped>
