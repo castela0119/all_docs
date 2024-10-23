@@ -22,11 +22,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth' // Pinia 스토어 불러오기
 import axios from 'axios'
 
 // 폼 데이터
 const email = ref('')
 const password = ref('')
+
+const authStore = useAuthStore()
 
 // 부모 컴포넌트에서 전달된 props와 emits
 // const props = defineProps(['onClose'])
@@ -45,7 +48,8 @@ const handleLogin = async () => {
 
       // 닉네임과 토큰을 로컬스토리지에 저장
       localStorage.setItem('nickname', nickname)
-      localStorage.setItem('token', token)
+      localStorage.setItem('userToken', token)
+      authStore.setToken(token)
 
       // 로그인 성공 이벤트 발생 및 모달 닫기
       emit('login-success', nickname)

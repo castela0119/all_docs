@@ -31,8 +31,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth' // Pinia 스토어 불러오기
 import LoginModal from './LoginModal.vue'
 import RegisterModal from './RegisterModal.vue'
 const router = useRouter()
@@ -40,6 +41,18 @@ const router = useRouter()
 const nickname = ref(null)
 const isLoginModalOpen = ref(false)
 const isRegisterModalOpen = ref(false)
+const authStore = useAuthStore()
+
+// 새로고침 시 로그인 상태 복원
+onMounted(() => {
+  authStore.loadFromStorage() // localStorage에서 로그인 상태 복원
+
+  // 새로고침 시 localStorage에서 닉네임 복원
+  const storedNickname = localStorage.getItem('nickname')
+  if (storedNickname) {
+    nickname.value = storedNickname
+  }
+})
 
 // 모달 열기
 const openModal = (type) => {
@@ -71,7 +84,7 @@ const handleRegisterSuccess = (userNickname) => {
 // 로그아웃 처리
 const logout = () => {
   localStorage.removeItem('nickname')
-  localStorage.removeItem('token')
+  authStore.clearToken() // 로그아웃 시 토큰 제거
   nickname.value = null // Vue 상태에서 닉네임 제거
   alert('로그아웃 되었습니다.')
 }
