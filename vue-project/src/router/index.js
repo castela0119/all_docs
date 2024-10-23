@@ -9,6 +9,11 @@ import BorrowDocumentCmplGuest from '@/views/guest/BorrowDocumentCmplGuest.vue'
 import DocStrorage from '@/views/DocStrorage.vue'
 import BorrowDocumentDetail from '@/views/BorrowDocumentDetail.vue'
 
+// 로그인 확인 함수
+function isAuthenticated() {
+  return !!localStorage.getItem('userToken') // 토큰이 있으면 로그인된 상태
+}
+
 const routes = [
   {
     path: '/',
@@ -23,7 +28,14 @@ const routes = [
   {
     path: '/borrow-document',
     name: 'BorrowDocument',
-    component: BorrowDocument
+    component: BorrowDocument,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated()) {
+        next() // 로그인되어 있으면 BorrowDocument로 접근 허용
+      } else {
+        next({ name: 'BorrowDocumentGuest' }) // 로그인되어 있지 않으면 게스트 페이지로 리다이렉트
+      }
+    }
   },
   {
     path: '/borrow-document-guest',
@@ -33,7 +45,14 @@ const routes = [
   {
     path: '/borrow-document-cmpl',
     name: 'BorrowDocumentCmpl',
-    component: BorrowDocumentCmpl
+    component: BorrowDocumentCmpl,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated()) {
+        next() // 로그인되어 있으면 BorrowDocumentCmpl로 접근 허용
+      } else {
+        next({ name: 'BorrowDocumentCmplGuest' }) // 로그인되지 않으면 게스트 페이지로 리다이렉트
+      }
+    }
   },
   {
     path: '/borrow-document-cmpl-guest',
@@ -48,7 +67,14 @@ const routes = [
   {
     path: '/doc-storage',
     name: 'DocStorage',
-    component: DocStrorage
+    component: DocStrorage,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated()) {
+        next() // 로그인된 경우 문서 저장소 페이지로 이동
+      } else {
+        next({ name: 'Home' }) // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
+      }
+    }
   },
   {
     path: '/borrow-document/:id',
