@@ -9,6 +9,8 @@
     <!-- 사용자 정보 또는 로그인/회원가입 버튼 -->
     <div v-if="nickname" class="user-info">
       <i class="fa fa-user-circle"></i> {{ nickname }} 님
+      <!-- 보관함 버튼 -->
+      <button @click="goToStorage">보관함</button>
       <button @click="logout">로그아웃</button>
     </div>
     <div v-else class="auth-buttons">
@@ -30,8 +32,10 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import LoginModal from './LoginModal.vue'
 import RegisterModal from './RegisterModal.vue'
+const router = useRouter()
 
 const nickname = ref(null)
 const isLoginModalOpen = ref(false)
@@ -70,6 +74,10 @@ const logout = () => {
   localStorage.removeItem('token')
   nickname.value = null // Vue 상태에서 닉네임 제거
   alert('로그아웃 되었습니다.')
+}
+
+const goToStorage = () => {
+  router.push({ name: 'DocStorage' })
 }
 </script>
 
