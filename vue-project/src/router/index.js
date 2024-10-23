@@ -6,6 +6,8 @@ import BorrowDocumentCmpl from '@/views/BorrowDocumentCmpl.vue'
 import OAuthRedirect from '@/views/OAuthRedirect.vue'
 import BorrowDocumentGuest from '@/views/guest/BorrowDocumentGuest.vue'
 import BorrowDocumentCmplGuest from '@/views/guest/BorrowDocumentCmplGuest.vue'
+import DocStrorage from '@/views/DocStrorage.vue'
+import BorrowDocumentDetail from '@/views/BorrowDocumentDetail.vue'
 
 const routes = [
   {
@@ -42,6 +44,16 @@ const routes = [
     path: '/oauth',
     name: 'oauthRedirect',
     component: OAuthRedirect // OAuth 리디렉션 처리 페이지
+  },
+  {
+    path: '/doc-storage',
+    name: 'DocStorage',
+    component: DocStrorage
+  },
+  {
+    path: '/borrow-document/:id',
+    name: 'BorrowDocumentDetail',
+    component: BorrowDocumentDetail
   }
 ]
 
