@@ -27,21 +27,36 @@
       @onClose="closeModal"
       @register-success="handleRegisterSuccess"
     />
+
+    <!-- 홈 모달 -->
+    <div v-if="isModalOpen" class="modal-overlay" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <p class="modal-text">{{ modalContent }}</p>
+        <div class="modal-buttons">
+          <button @click="closeModal">취소</button>
+          <button @click="confirmModal">확인</button>
+        </div>
+      </div>
+    </div>
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth' // Pinia 스토어 불러오기
 import LoginModal from './LoginModal.vue'
 import RegisterModal from './RegisterModal.vue'
+
 const router = useRouter()
+const route = useRoute()
 
 const nickname = ref(null)
 const isLoginModalOpen = ref(false)
 const isRegisterModalOpen = ref(false)
 const authStore = useAuthStore()
+
+const isModalOpen = ref(false)
 
 // 새로고침 시 로그인 상태 복원
 onMounted(() => {
@@ -56,15 +71,22 @@ onMounted(() => {
 
 // 모달 열기
 const openModal = (type) => {
-  if (type === 'login') {
+  if (route.name !== 'Home') {
+    // 다른 페이지에서는 모달 오픈
+    isModalOpen.value = true
+  } else if (type === 'login') {
     isLoginModalOpen.value = true
   } else if (type === 'register') {
     isRegisterModalOpen.value = true
+  } else if (type === 'home') {
+    // HomeView에서는 새로고침
+    window.location.reload()
   }
 }
 
 // 모달 닫기
 const closeModal = () => {
+  isModalOpen.value = false
   isLoginModalOpen.value = false
   isRegisterModalOpen.value = false
 }
@@ -97,6 +119,22 @@ const logout = () => {
 
 const goToStorage = () => {
   router.push({ name: 'DocStorage' })
+}
+
+// 현재 경로에 따라 모달의 내용을 동적으로 설정
+const modalContent = computed(() => {
+  if (route.name === 'PaperType') {
+    return '문서선택을 취소하시겠습니까? \n 홈으로 이동합니다.'
+  } else if (route.name === 'BorrowDocument') {
+    return '문서작성을 취소하시겠습니까? \n 작성한 내용이 사라질 수 있습니다.'
+  } else {
+    return '홈으로 이동하시겠습니까?'
+  }
+})
+
+const confirmModal = () => {
+  isModalOpen.value = false
+  router.push('/') // 확인 버튼을 누르면 홈으로 이동
 }
 </script>
 
