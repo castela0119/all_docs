@@ -133,7 +133,7 @@
             <li>차용금액: {{ formattedLoanAmount }}</li>
             <li>이자율: {{ interestRate }}%</li>
           </ul>
-          <p class="date">작성일 : {{ currentDate }}</p>
+          <p class="date">작성일 : {{ createdAt }}</p>
 
           <h3>채권자 정보</h3>
           <ul>
@@ -172,7 +172,7 @@ const loanEndDate = ref('') // 대여 종료일
 const loanAmount = ref('')
 const formattedLoanAmount = ref('')
 const interestRate = ref('')
-const currentDate = new Date().toLocaleDateString('ko-KR')
+const createdAt = ref(new Date().toLocaleDateString('ko-KR'))
 
 // 채권자 정보
 const lenderIdNumber = ref('')
@@ -332,7 +332,8 @@ const handleComplete = async () => {
       lenderPhoneNumber: lenderPhoneNumber.value,
       borrowerIdNumber: borrowerIdNumber.value,
       borrowerAddress: borrowerAddress.value,
-      borrowerPhoneNumber: borrowerPhoneNumber.value
+      borrowerPhoneNumber: borrowerPhoneNumber.value,
+      createdAt: createdAt.value
     }
 
     // loanContract를 저장하는 API 호출
