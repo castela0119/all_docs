@@ -27,12 +27,14 @@ const getAccessToken = async (code) => {
   const clientId = 'ebbf4859277d7b4a3021560588469c78' // REST API 키
   const redirectUri = 'http://localhost:5173/oauth' // 리다이렉션 URI
   const grantType = 'authorization_code'
+  const clientSecret = ''
 
   const body = new URLSearchParams({
     grant_type: grantType,
     client_id: clientId,
     redirect_uri: redirectUri,
-    code: code
+    code: code,
+    client_secret: clientSecret
   })
 
   // const data = await response.json()
