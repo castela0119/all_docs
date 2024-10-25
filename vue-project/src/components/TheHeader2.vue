@@ -71,13 +71,13 @@ onMounted(() => {
 
 // 모달 열기
 const openModal = (type) => {
-  if (route.name !== 'Home') {
-    // 다른 페이지에서는 모달 오픈
-    isModalOpen.value = true
-  } else if (type === 'login') {
+  if (type === 'login') {
     isLoginModalOpen.value = true
   } else if (type === 'register') {
     isRegisterModalOpen.value = true
+  } else if (route.name !== 'Home') {
+    // 다른 페이지에서는 모달 오픈
+    isModalOpen.value = true
   } else if (type === 'home') {
     // HomeView에서는 새로고침
     window.location.reload()
