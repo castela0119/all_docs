@@ -46,6 +46,8 @@ const handleLogin = async () => {
       // 로그인 성공, 서버로부터 닉네임과 토큰을 전달받음
       const { nickname, token } = response.data
 
+      console.log('response.data :: ', response.data)
+
       // 닉네임과 토큰을 로컬스토리지에 저장
       localStorage.setItem('nickname', nickname)
       localStorage.setItem('userToken', token)

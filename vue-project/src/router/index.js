@@ -77,9 +77,16 @@ const routes = [
     }
   },
   {
-    path: '/borrow-document/:id',
+    path: '/borrow-document-detail/:id',
     name: 'BorrowDocumentDetail',
-    component: BorrowDocumentDetail
+    component: BorrowDocumentDetail,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated()) {
+        next() // 로그인되어 있으면 BorrowDocumentCmpl로 접근 허용
+      } else {
+        next({ name: 'Home' }) // 로그인되지 않으면 게스트 페이지로 리다이렉트
+      }
+    }
   }
 ]
 

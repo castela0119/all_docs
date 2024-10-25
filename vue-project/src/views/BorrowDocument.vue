@@ -295,53 +295,86 @@ const goToPaperType = () => {
 }
 
 const handleComplete = async () => {
-  // 로그인된 사용자의 ID (예: localStorage나 Pinia 등에서 가져온다고 가정)
-  const userId = localStorage.getItem('userId')
+  // 저장 확인 메시지
+  const confirmation = confirm('저장하시겠습니까? \n 한번 저장하면 수정할 수 없습니다.')
+  if (!confirmation) return // 사용자가 취소하면 함수 종료
 
-  const loanContract = {
-    userId: userId, // 사용자 ID
-    lenderName: lenderName.value, // 채권자 이름
-    borrowerName: borrowerName.value, // 채무자 이름
-    loanStartDate: loanStartDate.value, // 대출 시작일
-    loanEndDate: loanEndDate.value, // 대출 종료일
-    loanAmount: loanAmount.value, // 대출 금액
-    interestRate: interestRate.value, // 이자율
-    lenderIdNumber: lenderIdNumber.value, // 채권자 주민등록번호
-    lenderAddress: lenderAddress.value, // 채권자 주소
-    lenderPhoneNumber: lenderPhoneNumber.value, // 채권자 전화번호
-    borrowerIdNumber: borrowerIdNumber.value, // 채무자 주민등록번호
-    borrowerAddress: borrowerAddress.value, // 채무자 주소
-    borrowerPhoneNumber: borrowerPhoneNumber.value // 채무자 전화번호
+  // 토큰 가져오기
+  const userToken = localStorage.getItem('userToken')
+  if (!userToken) {
+    alert('로그인이 필요합니다.')
+    return
   }
 
   try {
-    // API 요청을 서버로 전송 (POST)
-    const response = await axios.post('http://localhost:8080/api/loanContracts', loanContract)
-
-    // 성공적으로 응답을 받은 경우 response를 콘솔에 출력
-    console.log('API Response:', response)
-
-    // 성공 알림
-    $q.notify({
-      type: 'positive',
-      message: '문서가 성공적으로 저장되었습니다!',
-      position: 'top',
-      timeout: 3000
+    // 백엔드에서 현재 로그인된 사용자의 정보를 가져오는 API 호출
+    const response = await axios.get('http://localhost:8080/api/users/me', {
+      headers: {
+        Authorization: `Bearer ${userToken}` // 올바른 토큰 설정
+      }
     })
 
-    // 성공적으로 저장되면 상세보기 페이지로 이동
-    router.push({ name: 'BorrowDocumentDetail' })
+    console.log('response ::: ', response)
+    const user = response.data // 사용자 객체 반환
+
+    console.log('user.id :: ', user.id)
+
+    const loanContract = {
+      userId: user.id, // 사용자 ID만 설정
+      lenderName: lenderName.value,
+      borrowerName: borrowerName.value,
+      loanStartDate: loanStartDate.value,
+      loanEndDate: loanEndDate.value,
+      loanAmount: loanAmount.value,
+      interestRate: interestRate.value,
+      lenderIdNumber: lenderIdNumber.value,
+      lenderAddress: lenderAddress.value,
+      lenderPhoneNumber: lenderPhoneNumber.value,
+      borrowerIdNumber: borrowerIdNumber.value,
+      borrowerAddress: borrowerAddress.value,
+      borrowerPhoneNumber: borrowerPhoneNumber.value
+    }
+
+    // loanContract를 저장하는 API 호출
+    const saveResponse = await axios.post(
+      `http://localhost:8080/api/loanContracts/${user.id}`,
+      loanContract,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('userToken')}`
+        }
+      }
+    )
+
+    // 성공적으로 응답을 받은 경우 response를 콘솔에 출력
+    console.log('Loan contract saved successfully:', saveResponse.data)
+
+    // 성공 알림
+    // $q.notify({
+    //   type: 'positive',
+    //   message: '문서가 성공적으로 저장되었습니다!',
+    //   position: 'top',
+    //   timeout: 3000
+    // })
+
+    // `id` 값 추출
+    const createdLoanContractId = saveResponse.data.id
+
+    // 성공적으로 저장되면 상세보기 페이지로 이동 (id 포함)
+    router.push({ name: 'BorrowDocumentDetail', params: { id: createdLoanContractId } })
   } catch (error) {
+    console.log('error : ', error)
+
     // 오류 처리 및 오류 메시지 출력
     console.error('API Error:', error.response ? error.response : error.message)
 
     // 오류 알림
-    $q.notify({
-      type: 'negative',
-      message: '문서 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
-      position: 'top',
-      timeout: 3000
-    })
+    // $q.notify({
+    //   type: 'negative',
+    //   message: '문서 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
+    //   position: 'top',
+    //   timeout: 3000
+    // })
   }
 }
 </script>

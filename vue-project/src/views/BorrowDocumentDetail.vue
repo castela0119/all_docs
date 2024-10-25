@@ -38,9 +38,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import axios from 'axios'
+
+const route = useRoute()
+const router = useRouter()
 
 const lenderName = ref('')
 const borrowerName = ref('')
@@ -56,24 +61,45 @@ const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
 const currentDate = new Date().toLocaleDateString('ko-KR')
 
-onMounted(() => {
-  const borrowObj = JSON.parse(localStorage.getItem('borrowObj'))
+watch(
+  () => route.params.id,
+  async (newId) => {
+    if (newId) {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/loanContracts/${newId}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('userToken')}`
+          }
+        })
 
-  if (borrowObj) {
-    lenderName.value = borrowObj.lenderName
-    borrowerName.value = borrowObj.borrowerName
-    loanStartDate.value = borrowObj.loanStartDate
-    loanEndDate.value = borrowObj.loanEndDate
-    loanAmount.value = borrowObj.loanAmount
-    interestRate.value = borrowObj.interestRate
-    lenderIdNumber.value = borrowObj.lenderIdNumber
-    lenderAddress.value = borrowObj.lenderAddress
-    lenderPhoneNumber.value = borrowObj.lenderPhoneNumber
-    borrowerIdNumber.value = borrowObj.borrowerIdNumber
-    borrowerAddress.value = borrowObj.borrowerAddress
-    borrowerPhoneNumber.value = borrowObj.borrowerPhoneNumber
-  }
-})
+        console.log('조회된 response :: ', response)
+
+        const data = response.data
+        lenderName.value = data.lenderName
+        borrowerName.value = data.borrowerName
+        loanStartDate.value = data.loanStartDate
+        loanEndDate.value = data.loanEndDate
+        loanAmount.value = data.loanAmount
+        interestRate.value = data.interestRate
+        lenderIdNumber.value = data.lenderIdNumber
+        lenderAddress.value = data.lenderAddress
+        lenderPhoneNumber.value = data.lenderPhoneNumber
+        borrowerIdNumber.value = data.borrowerIdNumber
+        borrowerAddress.value = data.borrowerAddress
+        borrowerPhoneNumber.value = data.borrowerPhoneNumber
+      } catch (error) {
+        // 403 Forbidden 에러 발생 시 알림 표시 및 홈으로 리디렉션
+        if (error.response && error.response.status === 403) {
+          alert('권한이 없습니다')
+          router.push({ name: 'Home' }) // 홈 페이지로 이동
+        } else {
+          console.error('Error fetching loan contract data:', error)
+        }
+      }
+    }
+  },
+  { immediate: true }
+)
 
 // PDF로 내보내기 함수
 const exportToPdf = () => {
