@@ -172,7 +172,7 @@ const loanEndDate = ref('') // 대여 종료일
 const loanAmount = ref('')
 const formattedLoanAmount = ref('')
 const interestRate = ref('')
-const createdAt = ref(new Date().toLocaleDateString('ko-KR'))
+const createdAt = ref(new Date().toISOString())
 
 // 채권자 정보
 const lenderIdNumber = ref('')
