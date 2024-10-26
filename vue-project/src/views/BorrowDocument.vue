@@ -153,6 +153,22 @@
       </div>
     </div>
   </div>
+  <q-dialog v-model="isConfirmDialogOpen" persistent>
+    <q-card class="q-pa-md" style="max-width: 400px; border: 1px solid #ddd; border-radius: 8px">
+      <q-card-section>
+        <div class="text-h6" style="font-weight: bold; color: #4a4a4a">저장하시겠습니까?</div>
+        <p style="color: #666">한번 저장된 문서는 수정할 수 없습니다.</p>
+      </q-card-section>
+
+      <q-card-actions align="center" class="q-pt-none q-px-none">
+        <!-- 버튼 사이의 빈 공간 확보 -->
+        <q-btn flat label="취소" color="negative" @click="isConfirmDialogOpen = false" />
+        <q-space />
+        <!-- 양쪽 버튼 간 빈 공간 확보 -->
+        <q-btn flat label="확인" color="primary" @click="confirmSave" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup>
@@ -163,6 +179,7 @@ import axios from 'axios'
 
 // Vue Router 사용 설정
 const router = useRouter()
+const isConfirmDialogOpen = ref(false)
 
 // 데이터 정의
 const borrowerName = ref('')
@@ -310,15 +327,24 @@ const goToPaperType = () => {
   router.push({ name: 'PaperType' })
 }
 
+// 저장 버튼을 클릭하면 확인 모달을 띄움
 const handleComplete = async () => {
-  // 저장 확인 메시지
-  const confirmation = confirm('저장하시겠습니까? \n 한번 저장하면 수정할 수 없습니다.')
-  if (!confirmation) return // 사용자가 취소하면 함수 종료
+  // 저장 확인 모달 띄우기
+  isConfirmDialogOpen.value = true
+}
+
+const confirmSave = async () => {
+  isConfirmDialogOpen.value = false // 모달 닫기
 
   // 토큰 가져오기
   const userToken = localStorage.getItem('userToken')
   if (!userToken) {
-    alert('로그인이 필요합니다.')
+    Notify.create({
+      message: '로그인이 필요합니다.',
+      type: 'warning',
+      position: 'top',
+      timeout: 2000
+    })
     return
   }
 
@@ -386,12 +412,12 @@ const handleComplete = async () => {
     console.error('API Error:', error.response ? error.response : error.message)
 
     // 오류 알림
-    // $q.notify({
-    //   type: 'negative',
-    //   message: '문서 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
-    //   position: 'top',
-    //   timeout: 3000
-    // })
+    $q.notify({
+      type: 'negative',
+      message: '문서 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
+      position: 'top',
+      timeout: 3000
+    })
   }
 }
 </script>
