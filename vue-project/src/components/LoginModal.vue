@@ -21,14 +21,13 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth' // Pinia 스토어 불러오기
 import axios from 'axios'
 import { useQuasar } from 'quasar' // Quasar 사용
 
-// `inject`를 통해 전역으로 제공된 `apiUrl`을 가져옴
-const apiUrl = inject('apiUrl')
+const apiUrl = import.meta.env.VITE_APP_API_URL
 
 const router = useRouter()
 
@@ -45,6 +44,8 @@ const authStore = useAuthStore()
 const emit = defineEmits(['login-success'])
 
 const handleLogin = async () => {
+  console.log('apiUrl ::: ' + apiUrl)
+
   try {
     const response = await axios.post(`${apiUrl}/api/users/login`, {
       email: email.value,

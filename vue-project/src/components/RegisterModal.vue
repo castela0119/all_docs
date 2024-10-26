@@ -30,13 +30,13 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, inject } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useQuasar } from 'quasar' // Quasar 사용
 
 // `inject`를 통해 전역으로 제공된 `apiUrl`을 가져옴
-const apiUrl = inject('apiUrl')
+const apiUrl = import.meta.env.VITE_APP_API_URL
 
 const router = useRouter()
 const $q = useQuasar() // Quasar Notify 사용

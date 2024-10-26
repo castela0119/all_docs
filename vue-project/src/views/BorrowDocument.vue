@@ -172,13 +172,12 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, inject } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar, Notify } from 'quasar'
 import axios from 'axios'
 
-// `inject`를 통해 전역으로 제공된 `apiUrl`을 가져옴
-const apiUrl = inject('apiUrl')
+const apiUrl = import.meta.env.VITE_APP_API_URL
 
 // Vue Router 사용 설정
 const router = useRouter()
