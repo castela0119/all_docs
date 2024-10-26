@@ -158,10 +158,12 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
+import { useQuasar, Notify } from 'quasar'
 
 // Vue Router 사용 설정
 const router = useRouter()
+
+const $q = useQuasar()
 
 // 데이터 정의
 const borrowerName = ref('')
@@ -183,9 +185,17 @@ const borrowerIdNumber = ref('')
 const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
 
-const $q = useQuasar() // Quasar의 알림 사용
-
 onMounted(() => {
+  if (interestRate.value > 20) {
+    $q.notify({
+      type: 'warning',
+      message: '2024년 기준, 연 20% 이자를 초과할 수 없습니다.',
+      position: 'top',
+      timeout: 3000
+    })
+    interestRate.value = 20
+  }
+
   const storedData = localStorage.getItem('borrowObj')
   if (storedData) {
     const borrowObj = JSON.parse(storedData)
@@ -328,6 +338,14 @@ const handleComplete = () => {
 
   // localStorage에 데이터를 저장
   localStorage.setItem('borrowObj', JSON.stringify(borrowObj))
+
+  // 토스트 메시지 표시
+  Notify.create({
+    message: '저장되었습니다.',
+    type: 'positive', // 토스트 타입: 'positive', 'negative', 'info', 'warning'
+    position: 'top', // 토스트 위치: 'top', 'bottom', 'left', 'right', 'center'
+    timeout: 2000 // 2초 후 자동으로 사라짐
+  })
 
   // 페이지 이동
   router.push({ name: 'BorrowDocumentCmpl' })
