@@ -2,13 +2,13 @@
   <header class="app-header">
     <div class="logo" @click="openModal('home')">
       <img src="@/assets/logo.png" alt="Logo" />
-      모두의 문서
+      <!-- 로그인 여부에 따라 텍스트 변경 -->
+      {{ nickname ? `${nickname}의 문서` : '모두의 문서' }}
     </div>
     <div>{{ title }}</div>
 
     <!-- 사용자 정보 또는 로그인/회원가입 버튼 -->
     <div v-if="nickname" class="user-info">
-      <i class="fa fa-user-circle"></i> {{ nickname }} 님
       <!-- 보관함 버튼 -->
       <button @click="goToStorage">보관함</button>
       <button @click="logout">로그아웃</button>
@@ -165,10 +165,10 @@ const confirmModal = () => {
 }
 
 .auth-buttons button {
-  padding: 10px 15px;
+  padding: 5px 15px;
   border: none;
-  background-color: #007bff;
-  color: white;
+  background-color: #f4f5bce0;
+  color: rgb(1, 1, 1);
   border-radius: 4px;
   cursor: pointer;
 }

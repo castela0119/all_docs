@@ -168,7 +168,7 @@ const close = () => {
 }
 
 .modal-buttons button:last-child {
-  background-color: #007bff;
+  background-color: hsl(211, 22%, 54%);
   color: white;
 }
 
@@ -209,5 +209,15 @@ const close = () => {
 .error-message {
   color: red;
   font-size: 0.9rem;
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  font-size: 1.25rem; /* 크기 줄임 */
+  font-weight: 600; /* 두께를 조금 두껍게 */
+  color: #333; /* 텍스트 색상 변경 */
+  text-align: center; /* 가운데 정렬 */
+  border-bottom: 2px solid #7bb2ee; /* 하단에 파란색 선 추가 */
+  padding-bottom: 10px; /* 하단 패딩 추가 */
 }
 </style>
