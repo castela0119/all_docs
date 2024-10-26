@@ -156,7 +156,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar, Notify } from 'quasar'
 
@@ -290,6 +290,23 @@ const formatIdNumber = (type) => {
   }
 }
 
+// 날짜 유효성 검사 함수
+const validateEndDate = () => {
+  if (loanEndDate.value < loanStartDate.value) {
+    $q.notify({
+      type: 'warning',
+      message: '끝 날짜는 시작 날짜 이후로 설정해야 합니다.',
+      position: 'top',
+      timeout: 3000
+    })
+    loanEndDate.value = loanStartDate.value // 끝 날짜를 시작 날짜로 설정
+  }
+}
+
+// 시작 날짜와 끝 날짜를 감시하여 변경 시 유효성 검사
+watch(loanStartDate, validateEndDate)
+watch(loanEndDate, validateEndDate)
+
 // 전화번호 포맷팅 함수
 const formatPhoneNumber = (type) => {
   // 해당 전화번호 변수 선택(조건부 연산자 문법)
@@ -340,7 +357,7 @@ const handleComplete = () => {
 
   // 토스트 메시지 표시
   Notify.create({
-    message: '저장되었습니다.',
+    message: '작성이 완료되었습니다.',
     type: 'positive', // 토스트 타입: 'positive', 'negative', 'info', 'warning'
     position: 'top', // 토스트 위치: 'top', 'bottom', 'left', 'right', 'center'
     timeout: 2000 // 2초 후 자동으로 사라짐
