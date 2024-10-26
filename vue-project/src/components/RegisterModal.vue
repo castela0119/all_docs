@@ -31,7 +31,12 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { useQuasar } from 'quasar' // Quasar 사용
+
+const router = useRouter()
+const $q = useQuasar() // Quasar Notify 사용
 
 // 폼 데이터
 const nickname = ref('')
@@ -70,22 +75,45 @@ const handleRegister = async () => {
       })
 
       if (response.status === 200) {
-        // 회원가입 성공
-        emit('register-success', nickname.value)
+        // 회원가입 성공 알림 (Toast 형식)
+        $q.notify({
+          type: 'positive',
+          message: '회원가입이 완료되었습니다!',
+          position: 'top',
+          timeout: 2000
+        })
+
+        // 모달 닫기 및 홈으로 이동
         close()
-        alert('회원가입이 완료되었습니다.')
+        router.push({ name: 'Home' })
       }
     } catch (error) {
-      // HTTP 상태 코드 400 (중복된 이메일)
+      // 실패 알림
       if (error.response && error.response.status === 400) {
-        alert('중복된 이메일입니다. 다른 이메일을 사용해주세요.')
+        // 중복된 이메일 알림
+        $q.notify({
+          type: 'negative',
+          message: '이미 가입되어있는 이메일입니다. 다른 이메일을 사용해주세요.',
+          position: 'top',
+          timeout: 2000
+        })
       } else {
         console.error(error)
-        alert('회원가입 중 오류가 발생했습니다.')
+        $q.notify({
+          type: 'negative',
+          message: '회원가입 중 오류가 발생했습니다.',
+          position: 'top',
+          timeout: 2000
+        })
       }
     }
   } else {
-    alert('회원가입 정보를 모두 입력해주세요.')
+    $q.notify({
+      type: 'warning',
+      message: '회원가입 정보를 모두 입력해주세요.',
+      position: 'top',
+      timeout: 2000
+    })
   }
 }
 
