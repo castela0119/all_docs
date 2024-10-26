@@ -30,10 +30,13 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useQuasar } from 'quasar' // Quasar 사용
+
+// `inject`를 통해 전역으로 제공된 `apiUrl`을 가져옴
+const apiUrl = inject('apiUrl')
 
 const router = useRouter()
 const $q = useQuasar() // Quasar Notify 사용
@@ -68,7 +71,7 @@ const emit = defineEmits(['register-success'])
 const handleRegister = async () => {
   if (!passwordMismatch.value && nickname.value && email.value && password.value) {
     try {
-      const response = await axios.post('http://localhost:8080/api/users/register', {
+      const response = await axios.post(`${apiUrl}/api/users/register`, {
         nickname: nickname.value,
         email: email.value,
         password: password.value

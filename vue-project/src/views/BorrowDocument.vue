@@ -172,10 +172,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar, Notify } from 'quasar'
 import axios from 'axios'
+
+// `inject`를 통해 전역으로 제공된 `apiUrl`을 가져옴
+const apiUrl = inject('apiUrl')
 
 // Vue Router 사용 설정
 const router = useRouter()
@@ -350,7 +353,7 @@ const confirmSave = async () => {
 
   try {
     // 백엔드에서 현재 로그인된 사용자의 정보를 가져오는 API 호출
-    const response = await axios.get('http://localhost:8080/api/users/me', {
+    const response = await axios.get(`${apiUrl}/api/users/me`, {
       headers: {
         Authorization: `Bearer ${userToken}` // 올바른 토큰 설정
       }
@@ -379,15 +382,11 @@ const confirmSave = async () => {
     }
 
     // loanContract를 저장하는 API 호출
-    const saveResponse = await axios.post(
-      `http://localhost:8080/api/loanContracts/${user.id}`,
-      loanContract,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('userToken')}`
-        }
+    const saveResponse = await axios.post(`${apiUrl}/api/loanContracts/${user.id}`, loanContract, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('userToken')}`
       }
-    )
+    })
 
     // 성공적으로 응답을 받은 경우 response를 콘솔에 출력
     console.log('Loan contract saved successfully:', saveResponse.data)

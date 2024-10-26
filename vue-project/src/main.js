@@ -14,6 +14,8 @@ import '@quasar/extras/material-icons/material-icons.css'
 // Import Quasar css
 import 'quasar/dist/quasar.css'
 
+import apiUrlPlugin from './plugins/apiUrl'; // 방금 만든 플러그인 import
+
 const app = createApp(App)
 const pinia = createPinia() // Pinia 인스턴스 생성
 
@@ -25,6 +27,8 @@ app.use(Quasar, {
     Notify
   }
 })
+// 플러그인 사용
+app.use(apiUrlPlugin);
 app.use(router)
 app.mount('#app')
 
