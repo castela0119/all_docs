@@ -61,12 +61,14 @@ const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
 const currentDate = new Date().toLocaleDateString('ko-KR')
 
+const apiUrl = import.meta.env.VITE_APP_API_URL
+
 watch(
   () => route.params.id,
   async (newId) => {
     if (newId) {
       try {
-        const response = await axios.get(`http://localhost:8080/api/loanContracts/${newId}`, {
+        const response = await axios.get(`${apiUrl}/api/loanContracts/${newId}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('userToken')}`
           }

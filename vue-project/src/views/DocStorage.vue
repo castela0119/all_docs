@@ -27,13 +27,15 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
+const apiUrl = import.meta.env.VITE_APP_API_URL
+
 const savedDocuments = ref([])
 const router = useRouter()
 
 // 사용자 계약서 불러오기 함수
 const fetchSavedDocuments = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/loanContracts', {
+    const response = await axios.get(`${apiUrl}/api/loanContracts`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('userToken')}`
       }
