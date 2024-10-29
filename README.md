@@ -1,3 +1,10 @@
+# 모두의문서
+
+## 1. FIGMA 기획
+![Design Preview](assets/preview-image.png)
+
+[View the Design on Figma](https://www.figma.com/design/LfSURIapN7wPURtKt3GV6d/%EB%AA%A8%EB%91%90%EC%9D%98%EB%AC%B8%EC%84%9C?node-id=0-1&t=9lQOcW9HK9zy0i0Y-1)
+
 # vue-project
 
 This template should help get you started developing with Vue 3 in Vite.
