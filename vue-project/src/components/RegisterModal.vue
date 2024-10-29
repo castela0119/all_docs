@@ -31,7 +31,15 @@
 
 <script setup>
 import { ref, watch, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { useQuasar } from 'quasar' // Quasar 사용
+
+// `inject`를 통해 전역으로 제공된 `apiUrl`을 가져옴
+const apiUrl = import.meta.env.VITE_APP_API_URL
+
+const router = useRouter()
+const $q = useQuasar() // Quasar Notify 사용
 
 // 폼 데이터
 const nickname = ref('')
@@ -63,29 +71,52 @@ const emit = defineEmits(['register-success'])
 const handleRegister = async () => {
   if (!passwordMismatch.value && nickname.value && email.value && password.value) {
     try {
-      const response = await axios.post('http://localhost:8080/api/users/register', {
+      const response = await axios.post(`${apiUrl}/api/users/register`, {
         nickname: nickname.value,
         email: email.value,
         password: password.value
       })
 
       if (response.status === 200) {
-        // 회원가입 성공
-        emit('register-success', nickname.value)
+        // 회원가입 성공 알림 (Toast 형식)
+        $q.notify({
+          type: 'positive',
+          message: '회원가입이 완료되었습니다!',
+          position: 'top',
+          timeout: 2000
+        })
+
+        // 모달 닫기 및 홈으로 이동
         close()
-        alert('회원가입이 완료되었습니다.')
+        router.push({ name: 'Home' })
       }
     } catch (error) {
-      // HTTP 상태 코드 400 (중복된 이메일)
+      // 실패 알림
       if (error.response && error.response.status === 400) {
-        alert('중복된 이메일입니다. 다른 이메일을 사용해주세요.')
+        // 중복된 이메일 알림
+        $q.notify({
+          type: 'negative',
+          message: '이미 가입되어있는 이메일입니다. 다른 이메일을 사용해주세요.',
+          position: 'top',
+          timeout: 2000
+        })
       } else {
         console.error(error)
-        alert('회원가입 중 오류가 발생했습니다.')
+        $q.notify({
+          type: 'negative',
+          message: '회원가입 중 오류가 발생했습니다.',
+          position: 'top',
+          timeout: 2000
+        })
       }
     }
   } else {
-    alert('회원가입 정보를 모두 입력해주세요.')
+    $q.notify({
+      type: 'warning',
+      message: '회원가입 정보를 모두 입력해주세요.',
+      position: 'top',
+      timeout: 2000
+    })
   }
 }
 
@@ -168,7 +199,7 @@ const close = () => {
 }
 
 .modal-buttons button:last-child {
-  background-color: #007bff;
+  background-color: hsl(211, 22%, 54%);
   color: white;
 }
 
@@ -209,5 +240,15 @@ const close = () => {
 .error-message {
   color: red;
   font-size: 0.9rem;
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  font-size: 1.25rem; /* 크기 줄임 */
+  font-weight: 600; /* 두께를 조금 두껍게 */
+  color: #333; /* 텍스트 색상 변경 */
+  text-align: center; /* 가운데 정렬 */
+  border-bottom: 2px solid #7bb2ee; /* 하단에 파란색 선 추가 */
+  padding-bottom: 10px; /* 하단 패딩 추가 */
 }
 </style>

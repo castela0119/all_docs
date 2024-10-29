@@ -42,7 +42,7 @@
           <label>차용금액</label>
           <input
             @input="onInput"
-            v-model="formattedLoanAmount"
+            v-model="loanAmount"
             type="text"
             placeholder="차용금액을 입력하세요"
           />
@@ -66,7 +66,7 @@
           <label>채권자 주민등록번호</label>
           <input
             v-model="lenderIdNumber"
-            @input="formatIdNumber"
+            @input="formatIdNumber('lender')"
             type="text"
             placeholder="주민등록번호를 입력하세요"
           />
@@ -115,7 +115,7 @@
       <!-- 작성 완료 버튼 추가 -->
       <div class="button-group">
         <button class="btn btn-left" @click="goToPaperType">문서선택</button>
-        <button class="btn btn-right" @click="handleComplete">작성완료</button>
+        <button class="btn btn-right" @click="handleComplete">저장</button>
       </div>
     </div>
 
@@ -133,7 +133,7 @@
             <li>차용금액: {{ formattedLoanAmount }}</li>
             <li>이자율: {{ interestRate }}%</li>
           </ul>
-          <p class="date">작성일 : {{ currentDate }}</p>
+          <p class="date">작성일 : {{ createdAt }}</p>
 
           <h3>채권자 정보</h3>
           <ul>
@@ -153,15 +153,35 @@
       </div>
     </div>
   </div>
+  <q-dialog v-model="isConfirmDialogOpen" persistent>
+    <q-card class="q-pa-md" style="max-width: 400px; border: 1px solid #ddd; border-radius: 8px">
+      <q-card-section>
+        <div class="text-h6" style="font-weight: bold; color: #4a4a4a">저장하시겠습니까?</div>
+        <p style="color: #666">한번 저장된 문서는 수정할 수 없습니다.</p>
+      </q-card-section>
+
+      <q-card-actions align="center" class="q-pt-none q-px-none">
+        <!-- 버튼 사이의 빈 공간 확보 -->
+        <q-btn flat label="취소" color="negative" @click="isConfirmDialogOpen = false" />
+        <q-space />
+        <!-- 양쪽 버튼 간 빈 공간 확보 -->
+        <q-btn flat label="확인" color="primary" @click="confirmSave" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
+import { useQuasar, Notify } from 'quasar'
+import axios from 'axios'
+
+const apiUrl = import.meta.env.VITE_APP_API_URL
 
 // Vue Router 사용 설정
 const router = useRouter()
+const isConfirmDialogOpen = ref(false)
 
 // 데이터 정의
 const borrowerName = ref('')
@@ -171,7 +191,7 @@ const loanEndDate = ref('') // 대여 종료일
 const loanAmount = ref('')
 const formattedLoanAmount = ref('')
 const interestRate = ref('')
-const currentDate = new Date().toLocaleDateString('ko-KR')
+const createdAt = ref(new Date().toISOString())
 
 // 채권자 정보
 const lenderIdNumber = ref('')
@@ -185,24 +205,7 @@ const borrowerPhoneNumber = ref('')
 
 const $q = useQuasar() // Quasar의 알림 사용
 
-onMounted(() => {
-  const storedData = localStorage.getItem('borrowObj')
-  if (storedData) {
-    const borrowObj = JSON.parse(storedData)
-    lenderName.value = borrowObj.lenderName
-    borrowerName.value = borrowObj.borrowerName
-    loanStartDate.value = borrowObj.loanStartDate
-    loanEndDate.value = borrowObj.loanEndDate
-    loanAmount.value = borrowObj.loanAmount
-    interestRate.value = borrowObj.interestRate
-    lenderIdNumber.value = borrowObj.lenderIdNumber
-    lenderAddress.value = borrowObj.lenderAddress
-    lenderPhoneNumber.value = borrowObj.lenderPhoneNumber
-    borrowerIdNumber.value = borrowObj.borrowerIdNumber
-    borrowerAddress.value = borrowObj.borrowerAddress
-    borrowerPhoneNumber.value = borrowObj.borrowerPhoneNumber
-  }
-})
+onMounted(() => {})
 
 const nameInput = (type, event) => {
   const name = type === 'lender' ? lenderName : borrowerName
@@ -224,22 +227,13 @@ const nameInput = (type, event) => {
   }
 }
 
-// 숫자를 원화 형식으로 포맷하는 함수
-const formatCurrency = (num) => {
-  return new Intl.NumberFormat('ko-KR', {
-    style: 'currency',
-    currency: 'KRW',
-    maximumFractionDigits: 0 // 소수점 이하 표시하지 않음
-  }).format(num)
-}
-
 // input 이벤트 발생 시 숫자를 포맷하여 formattedLoanAmount에 저장
 const onInput = (event) => {
-  const inputValue = event.target.value.replace(/[₩,]/g, '') // 기존 원화 기호 및 콤마 제거
-  if (!isNaN(inputValue) && inputValue !== '') {
+  const inputValue = event.target.value.replace(/[^0-9]/g, '') // 숫자 이외의 문자 제거
+  if (inputValue) {
     // 숫자인 경우만 포맷 적용
-    loanAmount.value = inputValue
-    formattedLoanAmount.value = formatCurrency(inputValue)
+    loanAmount.value = parseInt(inputValue, 10).toLocaleString() // 쉼표가 포함된 형식으로 업데이트
+    formattedLoanAmount.value = `${parseInt(inputValue, 10).toLocaleString()} 원`
   } else {
     formattedLoanAmount.value = '' // 유효하지 않은 입력일 경우 빈 값 처리
   }
@@ -259,8 +253,11 @@ const checkInterestRate = () => {
 }
 
 // 주민등록번호 입력 시 포맷팅 및 제한
-const formatIdNumber = () => {
-  let inputValue = lenderIdNumber.value.replace(/\D/g, '') // 숫자 이외의 문자 제거
+const formatIdNumber = (type) => {
+  // `type`에 따라 사용할 변수 선택
+  const idNumber = type === 'lender' ? lenderIdNumber : borrowerIdNumber
+
+  let inputValue = idNumber.value.replace(/\D/g, '') // 숫자 이외의 문자 제거
 
   // 6자리 초과하면 하이픈 추가
   if (inputValue.length > 6) {
@@ -278,8 +275,30 @@ const formatIdNumber = () => {
     inputValue = inputValue.slice(0, 8) // 숫자 7자리까지만 유지 (980101-1)
   }
 
-  lenderIdNumber.value = inputValue // 포맷된 값으로 업데이트
+  // 선택한 변수에 포맷된 값 업데이트
+  if (type === 'lender') {
+    lenderIdNumber.value = inputValue
+  } else {
+    borrowerIdNumber.value = inputValue
+  }
 }
+
+// 날짜 유효성 검사 함수
+const validateEndDate = () => {
+  if (loanEndDate.value < loanStartDate.value) {
+    $q.notify({
+      type: 'warning',
+      message: '끝 날짜는 시작 날짜 이후로 설정해야 합니다.',
+      position: 'top',
+      timeout: 3000
+    })
+    loanEndDate.value = loanStartDate.value // 끝 날짜를 시작 날짜로 설정
+  }
+}
+
+// 시작 날짜와 끝 날짜를 감시하여 변경 시 유효성 검사
+watch(loanStartDate, validateEndDate)
+watch(loanEndDate, validateEndDate)
 
 // 전화번호 포맷팅 함수
 const formatPhoneNumber = (type) => {
@@ -310,27 +329,94 @@ const goToPaperType = () => {
   router.push({ name: 'PaperType' })
 }
 
-const handleComplete = () => {
-  const borrowObj = {
-    lenderName: lenderName.value,
-    borrowerName: borrowerName.value,
-    loanStartDate: loanStartDate.value,
-    loanEndDate: loanEndDate.value,
-    loanAmount: loanAmount.value,
-    interestRate: interestRate.value,
-    lenderIdNumber: lenderIdNumber.value,
-    lenderAddress: lenderAddress.value,
-    lenderPhoneNumber: lenderPhoneNumber.value,
-    borrowerIdNumber: borrowerIdNumber.value,
-    borrowerAddress: borrowerAddress.value,
-    borrowerPhoneNumber: borrowerPhoneNumber.value
+// 저장 버튼을 클릭하면 확인 모달을 띄움
+const handleComplete = async () => {
+  // 저장 확인 모달 띄우기
+  isConfirmDialogOpen.value = true
+}
+
+const confirmSave = async () => {
+  isConfirmDialogOpen.value = false // 모달 닫기
+
+  // 토큰 가져오기
+  const userToken = localStorage.getItem('userToken')
+  if (!userToken) {
+    Notify.create({
+      message: '로그인이 필요합니다.',
+      type: 'warning',
+      position: 'top',
+      timeout: 2000
+    })
+    return
   }
 
-  // localStorage에 데이터를 저장
-  localStorage.setItem('borrowObj', JSON.stringify(borrowObj))
+  try {
+    // 백엔드에서 현재 로그인된 사용자의 정보를 가져오는 API 호출
+    const response = await axios.get(`${apiUrl}/api/users/me`, {
+      headers: {
+        Authorization: `Bearer ${userToken}` // 올바른 토큰 설정
+      }
+    })
 
-  // 페이지 이동
-  router.push({ name: 'BorrowDocumentCmpl' })
+    console.log('response ::: ', response)
+    const user = response.data // 사용자 객체 반환
+
+    console.log('user.id :: ', user.id)
+
+    const loanContract = {
+      userId: user.id, // 사용자 ID만 설정
+      lenderName: lenderName.value,
+      borrowerName: borrowerName.value,
+      loanStartDate: loanStartDate.value,
+      loanEndDate: loanEndDate.value,
+      loanAmount: loanAmount.value,
+      interestRate: interestRate.value,
+      lenderIdNumber: lenderIdNumber.value,
+      lenderAddress: lenderAddress.value,
+      lenderPhoneNumber: lenderPhoneNumber.value,
+      borrowerIdNumber: borrowerIdNumber.value,
+      borrowerAddress: borrowerAddress.value,
+      borrowerPhoneNumber: borrowerPhoneNumber.value,
+      createdAt: createdAt.value
+    }
+
+    // loanContract를 저장하는 API 호출
+    const saveResponse = await axios.post(`${apiUrl}/api/loanContracts/${user.id}`, loanContract, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('userToken')}`
+      }
+    })
+
+    // 성공적으로 응답을 받은 경우 response를 콘솔에 출력
+    console.log('Loan contract saved successfully:', saveResponse.data)
+
+    // 토스트 메시지 표시
+    Notify.create({
+      message: '저장되었습니다.',
+      type: 'positive', // 토스트 타입: 'positive', 'negative', 'info', 'warning'
+      position: 'top', // 토스트 위치: 'top', 'bottom', 'left', 'right', 'center'
+      timeout: 2000 // 2초 후 자동으로 사라짐
+    })
+
+    // `id` 값 추출
+    const createdLoanContractId = saveResponse.data.id
+
+    // 성공적으로 저장되면 상세보기 페이지로 이동 (id 포함)
+    router.push({ name: 'BorrowDocumentDetail', params: { id: createdLoanContractId } })
+  } catch (error) {
+    console.log('error : ', error)
+
+    // 오류 처리 및 오류 메시지 출력
+    console.error('API Error:', error.response ? error.response : error.message)
+
+    // 오류 알림
+    $q.notify({
+      type: 'negative',
+      message: '문서 저장 중 오류가 발생했습니다. 다시 시도해주세요.',
+      position: 'top',
+      timeout: 3000
+    })
+  }
 }
 </script>
 

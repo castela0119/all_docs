@@ -14,21 +14,24 @@ import '@quasar/extras/material-icons/material-icons.css'
 // Import Quasar css
 import 'quasar/dist/quasar.css'
 
+import apiUrlPlugin from './plugins/apiUrl'; // 방금 만든 플러그인 import
+
 const app = createApp(App)
 const pinia = createPinia() // Pinia 인스턴스 생성
 
-app.use(createPinia())
-app.use(router)
-app.use(pinia) // Vue 앱에 Pinia 사용
-app.mount('#app')
-
-// 앱이 시작될 때 토큰을 복원
-const authStore = useAuthStore()
-authStore.loadTokenFromStorage()
-
+// Vue 앱에 Pinia와 Quasar 사용
+app.use(pinia)
 app.use(Quasar, {
   plugins: {
     SessionStorage,
     Notify
   }
 })
+// 플러그인 사용
+app.use(apiUrlPlugin);
+app.use(router)
+app.mount('#app')
+
+// Pinia가 초기화된 후에 authStore 사용
+const authStore = useAuthStore()
+authStore.loadTokenFromStorage()

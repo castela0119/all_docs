@@ -22,8 +22,16 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth' // Pinia 스토어 불러오기
 import axios from 'axios'
+import { useQuasar } from 'quasar' // Quasar 사용
+
+const apiUrl = import.meta.env.VITE_APP_API_URL
+
+const router = useRouter()
+
+const $q = useQuasar() // Quasar Notify 사용
 
 // 폼 데이터
 const email = ref('')
@@ -36,8 +44,10 @@ const authStore = useAuthStore()
 const emit = defineEmits(['login-success'])
 
 const handleLogin = async () => {
+  console.log('apiUrl ::: ' + apiUrl)
+
   try {
-    const response = await axios.post('http://localhost:8080/api/users/login', {
+    const response = await axios.post(`${apiUrl}/api/users/login`, {
       email: email.value,
       password: password.value
     })
@@ -45,6 +55,8 @@ const handleLogin = async () => {
     if (response.status === 200) {
       // 로그인 성공, 서버로부터 닉네임과 토큰을 전달받음
       const { nickname, token } = response.data
+
+      console.log('response.data :: ', response.data)
 
       // 닉네임과 토큰을 로컬스토리지에 저장
       localStorage.setItem('nickname', nickname)
@@ -54,32 +66,82 @@ const handleLogin = async () => {
       // 로그인 성공 이벤트 발생 및 모달 닫기
       emit('login-success', nickname)
       close()
-      alert('로그인 성공!')
+
+      // Toast 메시지 표시
+      $q.notify({
+        type: 'positive',
+        message: '로그인 성공!',
+        position: 'top',
+        timeout: 2000
+      })
+
+      // 홈으로 이동
+      router.push({ name: 'Home' })
     } else if (response.status === 401) {
       // 인증 실패: 잘못된 이메일 또는 비밀번호
-      alert('이메일 또는 비밀번호가 잘못되었습니다.')
+      $q.notify({
+        type: 'negative',
+        message: '이메일 또는 비밀번호가 잘못되었습니다.',
+        position: 'top',
+        timeout: 2000
+      })
     } else {
       // 기타 예외 상황
-      alert('로그인에 실패했습니다.')
+      $q.notify({
+        type: 'negative',
+        message: '로그인에 실패했습니다.',
+        position: 'top',
+        timeout: 2000
+      })
     }
   } catch (error) {
     if (error.response) {
       // 서버에서 응답이 왔지만 에러 코드가 있는 경우
       if (error.response.status === 400) {
-        alert('잘못된 요청입니다. 입력 정보를 확인해주세요.')
+        $q.notify({
+          type: 'negative',
+          message: '잘못된 요청입니다. 입력 정보를 확인해주세요.',
+          position: 'top',
+          timeout: 2000
+        })
       } else if (error.response.status === 401) {
-        alert('이메일 또는 비밀번호가 일치하지 않습니다.')
+        $q.notify({
+          type: 'negative',
+          message: '이메일 또는 비밀번호가 일치하지 않습니다.',
+          position: 'top',
+          timeout: 2000
+        })
       } else if (error.response.status === 500) {
-        alert('서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+        $q.notify({
+          type: 'negative',
+          message: '서버에서 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+          position: 'top',
+          timeout: 2000
+        })
       } else {
-        alert(`로그인 중 알 수 없는 오류가 발생했습니다. 상태 코드: ${error.response.status}`)
+        $q.notify({
+          type: 'negative',
+          message: `로그인 중 알 수 없는 오류가 발생했습니다. 상태 코드: ${error.response.status}`,
+          position: 'top',
+          timeout: 2000
+        })
       }
     } else if (error.request) {
       // 서버로 요청이 전송되었으나 응답이 없을 때
-      alert('서버로부터 응답이 없습니다. 네트워크 상태를 확인해주세요.')
+      $q.notify({
+        type: 'negative',
+        message: '서버로부터 응답이 없습니다. 네트워크 상태를 확인해주세요.',
+        position: 'top',
+        timeout: 2000
+      })
     } else {
       // 그 외의 에러 (요청이 전송되지 않은 경우 등)
-      alert('로그인 요청 중 문제가 발생했습니다.')
+      $q.notify({
+        type: 'negative',
+        message: '로그인 요청 중 문제가 발생했습니다.',
+        position: 'top',
+        timeout: 2000
+      })
     }
     console.error(error)
   }
@@ -164,7 +226,7 @@ const close = () => {
 }
 
 .modal-buttons button:last-child {
-  background-color: #007bff;
+  background-color: hsl(211, 22%, 54%);
   color: white;
 }
 
@@ -174,5 +236,15 @@ const close = () => {
   margin-bottom: 10px;
   border-radius: 4px;
   border: 1px solid #ddd;
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  font-size: 1.25rem; /* 크기 줄임 */
+  font-weight: 600; /* 두께를 조금 두껍게 */
+  color: #333; /* 텍스트 색상 변경 */
+  text-align: center; /* 가운데 정렬 */
+  border-bottom: 2px solid #7bb2ee; /* 하단에 파란색 선 추가 */
+  padding-bottom: 10px; /* 하단 패딩 추가 */
 }
 </style>

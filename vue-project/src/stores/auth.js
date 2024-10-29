@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    token: localStorage.getItem('userToken') || null // 처음에 localStorage에서 토큰을 가져옴
+    token: localStorage.getItem('userToken') || null, // 처음에 localStorage에서 토큰을 가져옴
+    nickname: localStorage.getItem('nickname') || null // 닉네임 초기화
   }),
   actions: {
     setToken(token, nickname) {
@@ -17,7 +18,6 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('userToken') // 토큰을 localStorage에서 제거
       localStorage.removeItem('nickname') // 닉네임도 제거
     },
-    // localStorage에서 토큰을 다시 로드하는 함수
     loadFromStorage() {
       const token = localStorage.getItem('userToken')
       const nickname = localStorage.getItem('nickname')
@@ -25,9 +25,9 @@ export const useAuthStore = defineStore('auth', {
         this.token = token
         this.nickname = nickname
       }
-    },
-    isLoggedIn() {
-      return !!this.token
     }
+  },
+  getters: {
+    isLoggedIn: (state) => !!state.token // 로그인 상태를 boolean으로 반환
   }
 })
