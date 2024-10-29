@@ -1,11 +1,19 @@
-# [모두의 문서](https://findalldocs.com/)
+# [모두의 문서](https://findalldocs.com/)  
+↑ 클릭 시 모두의 문서로 이동
+
+## 0. 노션으로 정리한 개발과정
+[노션 링크](https://www.notion.so/12e6dba4153c80178c4bc1b24ed07445?pvs=4)
+
+---
 
 ## 1. 프로젝트 소개
 **프로젝트 요약**  
 모두의문서는 사용자들이 다양한 문서(예: 대출 계약서, 고용 계약서, 부동산 계약서 등)를 쉽게 생성, 저장 및 관리할 수 있는 웹 애플리케이션입니다. 이 프로젝트는 문서 관리의 복잡성을 줄이고 사용자가 필요할 때 필요한 서류를 빠르게 생성하고 보관할 수 있도록 돕습니다.
 
-**FIGMA 링크 및 미리보기**  
-[모두의문서 FIGMA 보기](https://www.figma.com/design/LfSURIapN7wPURtKt3GV6d/%EB%AA%A8%EB%91%90%EC%9D%98%EB%AC%B8%EC%84%9C?node-id=0-1&t=9lQOcW9HK9zy0i0Y-1)
+**모두의 문서 FIGMA 링크 및 미리보기**  
+
+[모두의 문서 FIGMA 링크](https://www.figma.com/design/LfSURIapN7wPURtKt3GV6d/%EB%AA%A8%EB%91%90%EC%9D%98%EB%AC%B8%EC%84%9C?node-id=0-1&t=9lQOcW9HK9zy0i0Y-1)
+
 ![프로젝트 미리보기](vue-project/src/assets/figma-image.png)
 
 ---
@@ -115,6 +123,8 @@ src
 - **OAuth 및 JWT 적용**: 현재 단순한 랜덤 토큰 생성 방식을 OAuth와 JWT를 활용한 토큰 만료 및 암호화 방식으로 강화하여 보안을 높일 예정입니다.
 - **비밀번호 암호화 저장**: 회원가입 시 **BCrypt** 해싱을 사용해 비밀번호를 암호화하여 저장할 예정입니다.
 - **AWS를 통한 SSL 적용**: AWS Certificate Manager를 사용해 SSL을 적용하여 데이터 전송 보안을 강화할 예정입니다.
+- **CI/CD 파이프라인 구축**: 코드가 변경될 때마다 자동으로 빌드 및 배포가 이루어지도록 **Jenkins** 또는 **GitHub Actions** 같은 CI/CD 도구를 통해 배포 자동화를 설정할 예정입니다. 이를 통해 코드 푸시 시 자동 빌드, 주요 기능에 대한 테스트, 그리고 S3 및 EC2로의 자동 배포가 가능해져 배포 효율성과 안정성을 높일 계획입니다.
+
 
 ### 향후 개선 사항
 - **SMTP 메일 인증 추가**: 회원가입 시 **SMTP 메일 서비스**를 통해 사용자 이메일로 인증 메일을 발송하여, 인증 완료 후 가입이 완료되는 방식으로 보안을 강화할 예정입니다.
