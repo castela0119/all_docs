@@ -42,7 +42,7 @@
           <label>차용금액</label>
           <input
             @input="onInput"
-            v-model="formattedLoanAmount"
+            v-model="loanAmount"
             type="text"
             placeholder="차용금액을 입력하세요"
           />
@@ -66,7 +66,7 @@
           <label>채권자 주민등록번호</label>
           <input
             v-model="lenderIdNumber"
-            @input="formatIdNumber"
+            @input="formatIdNumber('lender')"
             type="text"
             placeholder="주민등록번호를 입력하세요"
           />
@@ -92,7 +92,7 @@
           <label>채무자 주민등록번호</label>
           <input
             v-model="borrowerIdNumber"
-            @input="formatIdNumber"
+            @input="formatIdNumber('borrower')"
             type="text"
             placeholder="주민등록번호를 입력하세요"
           />
@@ -156,12 +156,14 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
+import { useQuasar, Notify } from 'quasar'
 
 // Vue Router 사용 설정
 const router = useRouter()
+
+const $q = useQuasar()
 
 // 데이터 정의
 const borrowerName = ref('')
@@ -183,9 +185,17 @@ const borrowerIdNumber = ref('')
 const borrowerAddress = ref('')
 const borrowerPhoneNumber = ref('')
 
-const $q = useQuasar() // Quasar의 알림 사용
-
 onMounted(() => {
+  if (interestRate.value > 20) {
+    $q.notify({
+      type: 'warning',
+      message: '2024년 기준, 연 20% 이자를 초과할 수 없습니다.',
+      position: 'top',
+      timeout: 3000
+    })
+    interestRate.value = 20
+  }
+
   const storedData = localStorage.getItem('borrowObj')
   if (storedData) {
     const borrowObj = JSON.parse(storedData)
@@ -224,22 +234,13 @@ const nameInput = (type, event) => {
   }
 }
 
-// 숫자를 원화 형식으로 포맷하는 함수
-const formatCurrency = (num) => {
-  return new Intl.NumberFormat('ko-KR', {
-    style: 'currency',
-    currency: 'KRW',
-    maximumFractionDigits: 0 // 소수점 이하 표시하지 않음
-  }).format(num)
-}
-
 // input 이벤트 발생 시 숫자를 포맷하여 formattedLoanAmount에 저장
 const onInput = (event) => {
-  const inputValue = event.target.value.replace(/[₩,]/g, '') // 기존 원화 기호 및 콤마 제거
-  if (!isNaN(inputValue) && inputValue !== '') {
+  const inputValue = event.target.value.replace(/[^0-9]/g, '') // 숫자 이외의 문자 제거
+  if (inputValue) {
     // 숫자인 경우만 포맷 적용
-    loanAmount.value = inputValue
-    formattedLoanAmount.value = formatCurrency(inputValue)
+    loanAmount.value = parseInt(inputValue, 10).toLocaleString() // 쉼표가 포함된 형식으로 업데이트
+    formattedLoanAmount.value = `${parseInt(inputValue, 10).toLocaleString()} 원`
   } else {
     formattedLoanAmount.value = '' // 유효하지 않은 입력일 경우 빈 값 처리
   }
@@ -259,8 +260,11 @@ const checkInterestRate = () => {
 }
 
 // 주민등록번호 입력 시 포맷팅 및 제한
-const formatIdNumber = () => {
-  let inputValue = lenderIdNumber.value.replace(/\D/g, '') // 숫자 이외의 문자 제거
+const formatIdNumber = (type) => {
+  // `type`에 따라 사용할 변수 선택
+  const idNumber = type === 'lender' ? lenderIdNumber : borrowerIdNumber
+
+  let inputValue = idNumber.value.replace(/\D/g, '') // 숫자 이외의 문자 제거
 
   // 6자리 초과하면 하이픈 추가
   if (inputValue.length > 6) {
@@ -278,8 +282,30 @@ const formatIdNumber = () => {
     inputValue = inputValue.slice(0, 8) // 숫자 7자리까지만 유지 (980101-1)
   }
 
-  lenderIdNumber.value = inputValue // 포맷된 값으로 업데이트
+  // 선택한 변수에 포맷된 값 업데이트
+  if (type === 'lender') {
+    lenderIdNumber.value = inputValue
+  } else {
+    borrowerIdNumber.value = inputValue
+  }
 }
+
+// 날짜 유효성 검사 함수
+const validateEndDate = () => {
+  if (loanEndDate.value < loanStartDate.value) {
+    $q.notify({
+      type: 'warning',
+      message: '끝 날짜는 시작 날짜 이후로 설정해야 합니다.',
+      position: 'top',
+      timeout: 3000
+    })
+    loanEndDate.value = loanStartDate.value // 끝 날짜를 시작 날짜로 설정
+  }
+}
+
+// 시작 날짜와 끝 날짜를 감시하여 변경 시 유효성 검사
+watch(loanStartDate, validateEndDate)
+watch(loanEndDate, validateEndDate)
 
 // 전화번호 포맷팅 함수
 const formatPhoneNumber = (type) => {
@@ -328,6 +354,14 @@ const handleComplete = () => {
 
   // localStorage에 데이터를 저장
   localStorage.setItem('borrowObj', JSON.stringify(borrowObj))
+
+  // 토스트 메시지 표시
+  Notify.create({
+    message: '작성이 완료되었습니다.',
+    type: 'positive', // 토스트 타입: 'positive', 'negative', 'info', 'warning'
+    position: 'top', // 토스트 위치: 'top', 'bottom', 'left', 'right', 'center'
+    timeout: 2000 // 2초 후 자동으로 사라짐
+  })
 
   // 페이지 이동
   router.push({ name: 'BorrowDocumentCmpl' })

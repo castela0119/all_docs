@@ -1,6 +1,6 @@
 <template>
   <div class="storage-page">
-    <h1 class="page-title">보관함</h1>
+    <h1 class="page-title">문서 보관함</h1>
 
     <!-- 문서 목록 섹션 -->
     <div v-if="savedDocuments.length" class="documents-grid">
@@ -16,7 +16,9 @@
     </div>
 
     <!-- 저장된 문서가 없을 경우 -->
-    <p v-else>저장된 문서가 없습니다.</p>
+    <div v-else class="no-documents">
+      <p>저장된 문서가 없습니다.</p>
+    </div>
   </div>
 </template>
 
@@ -25,13 +27,15 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
+const apiUrl = import.meta.env.VITE_APP_API_URL
+
 const savedDocuments = ref([])
 const router = useRouter()
 
 // 사용자 계약서 불러오기 함수
 const fetchSavedDocuments = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/loanContracts', {
+    const response = await axios.get(`${apiUrl}/api/loanContracts`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('userToken')}`
       }
@@ -75,7 +79,6 @@ const goToDocumentDetail = (documentId) => {
   font-weight: bold;
   color: #4a4a4a;
   text-align: center;
-  padding: 10px 20px;
   background-color: #f4f6f8;
   border-radius: 10px;
   border: 1px solid #d1d5db;
@@ -90,16 +93,20 @@ const goToDocumentDetail = (documentId) => {
 }
 
 .document-card {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
+  background-color: #d8e3bc;
+  border: 2px solid #8aa399; /* 두께를 2px로 늘리고, 색상을 좀 더 눈에 띄게 변경 */
   padding: 15px;
   border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 약간의 그림자를 추가하여 입체감 부여 */
 }
 
 .document-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Hover 시 더 강조된 그림자 */
 }
 
 .document-card h3 {
@@ -112,5 +119,20 @@ const goToDocumentDetail = (documentId) => {
   margin: 5px 0 0;
   font-size: 14px;
   color: #666;
+}
+
+.no-documents {
+  text-align: center;
+  background-color: #f4f4f4; /* 약간의 회색 배경 */
+  padding: 50px; /* 충분한 여백 */
+  border: 2px dashed #d1d5db; /* 테두리를 점선으로 */
+  border-radius: 10px;
+  color: #777; /* 텍스트 색상 */
+  font-size: 1.2rem; /* 텍스트 크기 */
+}
+
+.no-documents p {
+  margin: 0;
+  font-weight: 500; /* 텍스트 강조 */
 }
 </style>
