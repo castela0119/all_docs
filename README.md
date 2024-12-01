@@ -1,4 +1,4 @@
-# [모두의 문서](https://findalldocs.com/)  
+# [모두의 문서]([http://findalldocs.com/](http://findalldocs.com.s3-website.ap-northeast-2.amazonaws.com/))  
 ↑ 클릭 시 모두의 문서로 이동
 
 ## 0. 노션으로 정리한 개발과정
